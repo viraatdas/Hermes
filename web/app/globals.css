@@ -1,8 +1,25 @@
 :root {
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #0a0a0a;
-  --muted: #6b7280;
-  --border: rgba(0, 0, 0, 0.12);
+  --muted: #737373;
+  --muted-foreground: #a3a3a3;
+  --border: rgba(0, 0, 0, 0.08);
+  --accent: #171717;
+  --accent-foreground: #fafafa;
+  --glow: rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #fafafa;
+    --muted: #a3a3a3;
+    --muted-foreground: #737373;
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #fafafa;
+    --accent-foreground: #0a0a0a;
+    --glow: rgba(255, 255, 255, 0.06);
+  }
 }
 
 html,
@@ -32,3 +49,4 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
