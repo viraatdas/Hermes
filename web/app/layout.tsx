@@ -15,6 +15,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Hermes",
   description: "A discrete meeting recorder for macOS.",
+  metadataBase: new URL("https://hermes.viraat.dev"),
+  openGraph: {
+    title: "Hermes",
+    description: "A discrete meeting recorder for macOS.",
+    type: "website",
+    images: [{ url: "/opengraph-image.png", width: 1024, height: 1024, alt: "Hermes" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hermes",
+    description: "A discrete meeting recorder for macOS.",
+    images: ["/twitter-image.png"],
+  },
 };
 
 export default function RootLayout({
