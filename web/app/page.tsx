@@ -75,11 +75,6 @@ export default function Home() {
           </div>
         </section>
 
-        <footer className={styles.footer}>
-          <p className={styles.finePrint}>
-            By downloading, you understand Hermes is in beta and may change quickly.
-          </p>
-        </footer>
       </main>
     </div>
   );

@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   title: "Hermes",
   description: "A discrete meeting recorder for macOS.",
   metadataBase: new URL("https://hermes.viraat.dev"),
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: ["/favicon.svg"],
+    apple: ["/apple-icon.png"],
+  },
   openGraph: {
     title: "Hermes",
     description: "A discrete meeting recorder for macOS.",

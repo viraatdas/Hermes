@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hermes">
+  <rect x="3" y="3" width="58" height="58" rx="14" fill="#ffffff" stroke="#0a0a0a" stroke-width="2"/>
+  <path
+    d="M20 18h6v11h12V18h6v28h-6V34H26v12h-6V18z"
+    fill="#0a0a0a"
+  />
+</svg>
+
