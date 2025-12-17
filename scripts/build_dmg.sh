@@ -19,6 +19,9 @@ xcodebuild \
   -configuration Release \
   -destination "generic/platform=macOS" \
   -archivePath "${ARCHIVE_PATH}" \
+  CODE_SIGNING_ALLOWED=NO \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGN_IDENTITY="" \
   archive
 
 APP_PATH="${ARCHIVE_PATH}/Products/Applications/Hermes.app"

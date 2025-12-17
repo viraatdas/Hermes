@@ -11,5 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build (Debug)
-        run: xcodebuild -project "Hermes.xcodeproj" -scheme "Hermes" -configuration Debug -destination "platform=macOS" build
+        run: xcodebuild -project "Hermes.xcodeproj" -scheme "Hermes" -configuration Debug -destination "platform=macOS" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build
 
