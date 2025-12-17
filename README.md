@@ -5,6 +5,7 @@ A native macOS menu bar app that records your meetings with one-click join, auto
 ![macOS 14+](https://img.shields.io/badge/macOS-14+-blue)
 ![Swift 5](https://img.shields.io/badge/Swift-5-orange)
 [![CI](https://github.com/viraatdas/Hermes/actions/workflows/ci.yml/badge.svg)](https://github.com/viraatdas/Hermes/actions/workflows/ci.yml)
+[![Release DMG](https://github.com/viraatdas/Hermes/actions/workflows/release.yml/badge.svg)](https://github.com/viraatdas/Hermes/actions/workflows/release.yml)
 
 ## Features
 
