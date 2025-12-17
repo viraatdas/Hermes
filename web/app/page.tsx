@@ -34,47 +34,44 @@ export default function Home() {
           </p>
         </header>
 
-        <section className={styles.actions}>
-          <a
-            className={styles.badgeLink}
-            href="https://github.com/viraatdas/Hermes/releases/download/v0.1.7/Hermes-v0.1.7.dmg"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.downloadBadge}
-              src="/download-badge.svg"
-              alt="Download Hermes"
-              width={180}
-              height={60}
-              priority
-            />
-          </a>
-          <div className={styles.meta}>
-            <div className={styles.metaRow}>
-              <span className={styles.muted}>Open source</span>
-              <span className={styles.dot} aria-hidden="true">
-                ·
-              </span>
-              <a
-                className={styles.link}
-                href="https://github.com/viraatdas/Hermes"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GitHubMark className={styles.githubIcon} />
-                GitHub
-              </a>
-            </div>
-            <div className={styles.metaRow}>
-              <span className={styles.muted}>Suggestions / contact:</span>
-              <a className={styles.link} href="mailto:viraat@exla.ai">
-                viraat@exla.ai
-              </a>
-            </div>
-          </div>
-        </section>
+        <a
+          className={styles.badgeLink}
+          href="https://github.com/viraatdas/Hermes/releases/download/v0.1.7/Hermes-v0.1.7.dmg"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            src="/download-badge.svg"
+            alt="Download Hermes"
+            width={180}
+            height={60}
+            priority
+          />
+        </a>
 
+        <div className={styles.meta}>
+          <div className={styles.metaRow}>
+            <span className={styles.muted}>Open source</span>
+            <span className={styles.dot} aria-hidden="true">
+              ·
+            </span>
+            <a
+              className={styles.link}
+              href="https://github.com/viraatdas/Hermes"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GitHubMark className={styles.githubIcon} />
+              GitHub
+            </a>
+          </div>
+          <div className={styles.metaRow}>
+            <span className={styles.muted}>Suggestions / contact:</span>
+            <a className={styles.link} href="mailto:viraat@exla.ai">
+              viraat@exla.ai
+            </a>
+          </div>
+        </div>
       </main>
     </div>
   );

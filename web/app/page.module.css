@@ -62,29 +62,17 @@
   margin: 0 auto;
 }
 
-.actions {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-top: 10px;
-  align-items: center;
-  justify-content: center;
-}
-
 .badgeLink {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 24px 0;
   transition: transform 120ms ease, opacity 120ms ease;
 }
 
 .badgeLink:hover {
   transform: translateY(-1px);
   opacity: 0.92;
-}
-
-.downloadBadge {
-  display: block;
 }
 
 .meta {
