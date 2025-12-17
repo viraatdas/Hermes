@@ -91,6 +91,9 @@ class MeetingManager: ObservableObject {
             
             // Save the recording metadata
             AppState.shared.addRecordedMeeting(recordedMeeting)
+            // Reload from disk to ensure the UI reflects the canonical sorted list
+            // (and to avoid any stale state issues in the history view).
+            AppState.shared.loadRecordedMeetings()
             
             currentRecording = nil
             

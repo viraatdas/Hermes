@@ -45,6 +45,18 @@ struct MeetingHistoryView: View {
             }
         }
         .frame(minWidth: 800, minHeight: 500)
+        .onAppear {
+            appState.loadRecordedMeetings()
+            if selectedMeeting == nil {
+                selectedMeeting = appState.recordedMeetings.first
+            }
+        }
+        .onChange(of: appState.recordedMeetings) { _, newValue in
+            // If nothing is selected, auto-select newest so the update is obvious.
+            if selectedMeeting == nil {
+                selectedMeeting = newValue.first
+            }
+        }
     }
 }
 
