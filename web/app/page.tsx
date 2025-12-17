@@ -37,7 +37,7 @@ export default function Home() {
         <section className={styles.actions}>
           <a
             className={styles.badgeLink}
-            href="https://github.com/viraatdas/Hermes/releases/latest"
+            href="https://github.com/viraatdas/Hermes/releases/download/v0.1.7/Hermes-v0.1.7.dmg"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -51,6 +51,10 @@ export default function Home() {
             />
           </a>
           <div className={styles.meta}>
+            <span className={styles.muted}>Open source</span>
+            <span className={styles.dot} aria-hidden="true">
+              ·
+            </span>
             <a
               className={styles.link}
               href="https://github.com/viraatdas/Hermes"
