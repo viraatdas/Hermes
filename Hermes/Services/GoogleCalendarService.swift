@@ -8,10 +8,14 @@ class GoogleCalendarService: NSObject, ObservableObject {
     // Google OAuth credentials are injected via Info.plist so we don't commit secrets.
     // Set these in Hermes/Info.plist (or inject during CI build).
     private var clientId: String {
-        Bundle.main.object(forInfoDictionaryKey: "HERMES_GOOGLE_CLIENT_ID") as? String ?? ""
+        let plist = (Bundle.main.object(forInfoDictionaryKey: "HERMES_GOOGLE_CLIENT_ID") as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        if !plist.isEmpty { return plist }
+        return (UserDefaults.standard.string(forKey: "googleOAuthClientId") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
     }
     private var clientSecret: String {
-        Bundle.main.object(forInfoDictionaryKey: "HERMES_GOOGLE_CLIENT_SECRET") as? String ?? ""
+        let plist = (Bundle.main.object(forInfoDictionaryKey: "HERMES_GOOGLE_CLIENT_SECRET") as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        if !plist.isEmpty { return plist }
+        return (UserDefaults.standard.string(forKey: "googleOAuthClientSecret") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
     }
     private let redirectURI = "http://127.0.0.1:8089/callback"
     private let scope = "https://www.googleapis.com/auth/calendar.readonly"
@@ -37,6 +41,12 @@ class GoogleCalendarService: NSObject, ObservableObject {
     func authenticate() async throws {
         isAuthenticating = true
         authError = nil
+
+        guard !clientId.isEmpty, !clientSecret.isEmpty else {
+            isAuthenticating = false
+            authError = AuthError.missingClientCredentials.localizedDescription
+            throw AuthError.missingClientCredentials
+        }
         
         // Start local server to receive callback
         localServer = LocalAuthServer(port: 8089)
@@ -77,7 +87,6 @@ class GoogleCalendarService: NSObject, ObservableObject {
     }
     
     private func buildAuthURL() -> String {
-        guard !clientId.isEmpty else { return "" }
         let baseURL = "https://accounts.google.com/o/oauth2/v2/auth"
         var components = URLComponents(string: baseURL)!
         

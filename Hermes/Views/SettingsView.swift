@@ -8,6 +8,10 @@ struct SettingsView: View {
     @AppStorage("autoRecordMeetings") private var autoRecordMeetings = true
     @AppStorage("hideWhenScreenSharing") private var hideWhenScreenSharing = true
     @AppStorage("audioQuality") private var audioQuality = "high"
+
+    // Google OAuth credentials (stored locally; used when Info.plist keys are empty)
+    @AppStorage("googleOAuthClientId") private var googleOAuthClientId = ""
+    @AppStorage("googleOAuthClientSecret") private var googleOAuthClientSecret = ""
     
     @State private var launchAtLogin = false
     
@@ -96,6 +100,33 @@ struct SettingsView: View {
                 }
             } header: {
                 Text("Google Calendar")
+            }
+
+            Section {
+                TextField("Client ID", text: $googleOAuthClientId)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 12, design: .monospaced))
+
+                SecureField("Client Secret", text: $googleOAuthClientSecret)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 12, design: .monospaced))
+
+                Text("Required to connect. These are stored locally on your Mac. For distributed builds, credentials are injected during release.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                HStack {
+                    Button("Clear") {
+                        googleOAuthClientId = ""
+                        googleOAuthClientSecret = ""
+                        calendarService.signOut()
+                    }
+                    .foregroundColor(.red)
+
+                    Spacer()
+                }
+            } header: {
+                Text("OAuth Credentials")
             }
             
             Section {
