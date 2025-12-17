@@ -13,7 +13,7 @@
   width: 100%;
   max-width: 720px;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 96px 24px;
 }
@@ -23,12 +23,40 @@
   flex-direction: column;
   gap: 14px;
   margin-bottom: 28px;
+  width: 100%;
+  text-align: center;
+}
+
+.heroRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.logoMark {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .titleRow {
   display: flex;
   align-items: center;
   gap: 10px;
+  justify-content: center;
 }
 
 .title {
@@ -36,6 +64,23 @@
   line-height: 1.05;
   letter-spacing: -0.04em;
   font-weight: 300;
+}
+
+.platformRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.appleIcon {
+  opacity: 0.9;
+}
+
+.platformText {
+  letter-spacing: 0.02em;
 }
 
 .badge {
@@ -56,6 +101,7 @@
   line-height: 1.7;
   color: var(--muted);
   font-weight: 300;
+  margin: 0 auto;
 }
 
 .actions {
@@ -64,6 +110,7 @@
   width: 100%;
   gap: 14px;
   margin-top: 10px;
+  align-items: center;
 }
 
 .primary {
@@ -93,9 +140,14 @@
   color: var(--muted);
   font-size: 14px;
   font-weight: 300;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border-bottom: 1px solid transparent;
   transition: border-color 120ms ease;
 }
@@ -106,6 +158,14 @@
 
 .dot {
   opacity: 0.6;
+}
+
+.githubIcon {
+  opacity: 0.9;
+}
+
+.muted {
+  color: var(--muted);
 }
 
 .footer {
