@@ -45,8 +45,8 @@ export default function Home() {
               className={styles.downloadBadge}
               src="/download-badge.svg"
               alt="Download Hermes"
-              width={210}
-              height={70}
+              width={180}
+              height={60}
               priority
             />
           </a>

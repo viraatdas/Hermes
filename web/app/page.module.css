@@ -65,14 +65,14 @@
 .actions {
   display: flex;
   flex-direction: column;
-  width: 100%;
   gap: 14px;
   margin-top: 10px;
   align-items: center;
+  justify-content: center;
 }
 
 .badgeLink {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 120ms ease, opacity 120ms ease;
@@ -85,8 +85,6 @@
 
 .downloadBadge {
   display: block;
-  height: auto;
-  max-width: 100%;
 }
 
 .meta {
