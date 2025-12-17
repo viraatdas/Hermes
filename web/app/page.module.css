@@ -27,28 +27,6 @@
   text-align: center;
 }
 
-.heroRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-}
-
-.logoImg {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  object-fit: cover;
-}
-
-.titleBlock {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
 .titleRow {
   display: flex;
   align-items: center;
@@ -61,23 +39,6 @@
   line-height: 1.05;
   letter-spacing: -0.04em;
   font-weight: 300;
-}
-
-.platformRow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 300;
-}
-
-.appleIcon {
-  opacity: 0.9;
-}
-
-.platformText {
-  letter-spacing: 0.02em;
 }
 
 .badge {
