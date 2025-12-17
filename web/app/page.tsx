@@ -1,4 +1,5 @@
 import styles from "./page.module.css";
+import Image from "next/image";
 
 function AppleMark(props: { className?: string }) {
   return (
@@ -46,9 +47,7 @@ export default function Home() {
       <main className={styles.main}>
         <header className={styles.header}>
           <div className={styles.heroRow}>
-            <div className={styles.logoMark} aria-hidden="true">
-              H
-            </div>
+            <Image className={styles.logoImg} src="/icon.png" alt="Hermes" width={44} height={44} priority />
             <div className={styles.titleBlock}>
               <div className={styles.titleRow}>
                 <h1 className={styles.title}>Hermes</h1>
@@ -68,12 +67,19 @@ export default function Home() {
 
         <section className={styles.actions}>
           <a
-            className={styles.primary}
+            className={styles.badgeLink}
             href="https://github.com/viraatdas/Hermes/releases/latest"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Download Hermes
+            <Image
+              className={styles.downloadBadge}
+              src="/download-badge.svg"
+              alt="Download Hermes"
+              width={240}
+              height={80}
+              priority
+            />
           </a>
           <div className={styles.meta}>
             <a

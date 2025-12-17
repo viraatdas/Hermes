@@ -34,15 +34,12 @@
   gap: 14px;
 }
 
-.logoMark {
+.logoImg {
   width: 44px;
   height: 44px;
-  border-radius: 999px;
+  border-radius: 12px;
   border: 1px solid var(--border);
-  display: grid;
-  place-items: center;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  object-fit: cover;
 }
 
 .titleBlock {
@@ -113,24 +110,22 @@
   align-items: center;
 }
 
-.primary {
+.badgeLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 42px;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: #000;
-  color: #fff;
-  border: 1px solid #000;
   transition: transform 120ms ease, opacity 120ms ease;
-  font-weight: 400;
-  width: fit-content;
 }
 
-.primary:hover {
+.badgeLink:hover {
   transform: translateY(-1px);
   opacity: 0.92;
+}
+
+.downloadBadge {
+  display: block;
+  height: auto;
+  max-width: 100%;
 }
 
 .meta {
