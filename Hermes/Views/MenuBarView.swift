@@ -34,7 +34,23 @@ struct MenuBarView: View {
                 
                 Spacer()
                 
-                if appState.isRecording {
+                if !appState.isRecording && !isSaving && !showSavedMessage {
+                    Button(action: {
+                        startManualRecording()
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "record.circle.fill")
+                                .font(.system(size: 12, weight: .semibold))
+                            Text("Record")
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.red)
+                    .controlSize(.small)
+                } else if appState.isRecording {
                     HStack(spacing: 4) {
                         Circle()
                             .fill(.red)
@@ -220,22 +236,6 @@ struct MenuBarView: View {
             
             // Footer actions
             VStack(spacing: 2) {
-                // Start Recording button - only show when not recording
-                if !appState.isRecording && !isSaving && !showSavedMessage {
-                    Button(action: {
-                        startManualRecording()
-                    }) {
-                        HStack {
-                            Image(systemName: "record.circle")
-                                .foregroundColor(.red)
-                            Text("Start Recording")
-                            Spacer()
-                        }
-                        .padding(.vertical, 6)
-                    }
-                    .buttonStyle(.plain)
-                }
-                
                 // Open Calendar window
                 Button(action: {
                     NSApp.activate(ignoringOtherApps: true)
