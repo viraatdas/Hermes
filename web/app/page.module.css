@@ -9,13 +9,13 @@
 
 .main {
   display: flex;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 720px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 96px 24px;
+  text-align: center;
+  width: 100%;
+  max-width: 720px;
+  padding: 48px 24px;
 }
 
 .header {
