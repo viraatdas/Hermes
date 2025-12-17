@@ -25,13 +25,13 @@ export const metadata: Metadata = {
     title: "Hermes",
     description: "A discrete meeting recorder for macOS.",
     type: "website",
-    images: [{ url: "/opengraph-image.png", width: 1024, height: 1024, alt: "Hermes" }],
+    images: [{ url: "/opengraph-image.png?v=2", width: 1200, height: 1200, alt: "Hermes" }],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Hermes",
     description: "A discrete meeting recorder for macOS.",
-    images: ["/twitter-image.png"],
+    images: ["/twitter-image.png?v=2"],
   },
 };
 
