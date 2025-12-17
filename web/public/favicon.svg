@@ -1,23 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hermes">
-  <!-- Winged Hat (Petasos) of Hermes -->
-  <!-- Hat dome -->
-  <ellipse cx="32" cy="34" rx="18" ry="10" fill="#0a0a0a"/>
-  <!-- Hat brim -->
-  <ellipse cx="32" cy="38" rx="26" ry="6" fill="#0a0a0a"/>
-  <!-- Hat top knob -->
-  <circle cx="32" cy="26" r="4" fill="#0a0a0a"/>
-  
-  <!-- Left wing -->
-  <g fill="#0a0a0a">
-    <path d="M6 30 Q2 26 4 20 Q8 22 12 22 Q10 26 8 32 Q6 32 6 30Z"/>
-    <path d="M10 28 Q6 22 8 14 Q14 18 18 20 Q14 24 12 30 Q10 30 10 28Z"/>
-    <path d="M14 26 Q12 18 16 10 Q22 16 24 22 Q20 24 16 28 Q14 28 14 26Z"/>
-  </g>
-  
-  <!-- Right wing (mirrored) -->
-  <g fill="#0a0a0a">
-    <path d="M58 30 Q62 26 60 20 Q56 22 52 22 Q54 26 56 32 Q58 32 58 30Z"/>
-    <path d="M54 28 Q58 22 56 14 Q50 18 46 20 Q50 24 52 30 Q54 30 54 28Z"/>
-    <path d="M50 26 Q52 18 48 10 Q42 16 40 22 Q44 24 48 28 Q50 28 50 26Z"/>
-  </g>
+  <rect width="64" height="64" rx="14" fill="#0a0a0a"/>
+  <path d="M18 16h7v12h14V16h7v32h-7V35H25v13h-7V16z" fill="#ffffff"/>
 </svg>
