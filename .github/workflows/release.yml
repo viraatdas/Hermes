@@ -15,10 +15,17 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Inject Google OAuth credentials (optional)
-        if: ${{ secrets.HERMES_GOOGLE_CLIENT_ID != '' && secrets.HERMES_GOOGLE_CLIENT_SECRET != '' }}
+        env:
+          HERMES_GOOGLE_CLIENT_ID: ${{ secrets.HERMES_GOOGLE_CLIENT_ID }}
+          HERMES_GOOGLE_CLIENT_SECRET: ${{ secrets.HERMES_GOOGLE_CLIENT_SECRET }}
         run: |
-          /usr/libexec/PlistBuddy -c "Set :HERMES_GOOGLE_CLIENT_ID ${{ secrets.HERMES_GOOGLE_CLIENT_ID }}" "Hermes/Info.plist" || /usr/libexec/PlistBuddy -c "Add :HERMES_GOOGLE_CLIENT_ID string ${{ secrets.HERMES_GOOGLE_CLIENT_ID }}" "Hermes/Info.plist"
-          /usr/libexec/PlistBuddy -c "Set :HERMES_GOOGLE_CLIENT_SECRET ${{ secrets.HERMES_GOOGLE_CLIENT_SECRET }}" "Hermes/Info.plist" || /usr/libexec/PlistBuddy -c "Add :HERMES_GOOGLE_CLIENT_SECRET string ${{ secrets.HERMES_GOOGLE_CLIENT_SECRET }}" "Hermes/Info.plist"
+          if [[ -n "${HERMES_GOOGLE_CLIENT_ID:-}" && -n "${HERMES_GOOGLE_CLIENT_SECRET:-}" ]]; then
+            /usr/libexec/PlistBuddy -c "Set :HERMES_GOOGLE_CLIENT_ID ${HERMES_GOOGLE_CLIENT_ID}" "Hermes/Info.plist" || /usr/libexec/PlistBuddy -c "Add :HERMES_GOOGLE_CLIENT_ID string ${HERMES_GOOGLE_CLIENT_ID}" "Hermes/Info.plist"
+            /usr/libexec/PlistBuddy -c "Set :HERMES_GOOGLE_CLIENT_SECRET ${HERMES_GOOGLE_CLIENT_SECRET}" "Hermes/Info.plist" || /usr/libexec/PlistBuddy -c "Add :HERMES_GOOGLE_CLIENT_SECRET string ${HERMES_GOOGLE_CLIENT_SECRET}" "Hermes/Info.plist"
+            echo "Injected Google OAuth credentials."
+          else
+            echo "No Google OAuth secrets configured; skipping injection."
+          fi
 
       - name: Build DMG
         run: |
