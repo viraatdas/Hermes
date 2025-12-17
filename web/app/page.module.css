@@ -62,17 +62,21 @@
   margin: 0 auto;
 }
 
-.badgeLink {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.downloadButton {
+  display: inline-block;
   margin: 24px 0;
+  padding: 14px 28px;
+  background-color: #0a0a0a;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 10px;
   transition: transform 120ms ease, opacity 120ms ease;
 }
 
-.badgeLink:hover {
+.downloadButton:hover {
   transform: translateY(-1px);
-  opacity: 0.92;
+  opacity: 0.88;
 }
 
 .meta {

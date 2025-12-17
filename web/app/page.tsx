@@ -1,5 +1,4 @@
 import styles from "./page.module.css";
-import Image from "next/image";
 
 function GitHubMark(props: { className?: string }) {
   return (
@@ -35,18 +34,12 @@ export default function Home() {
         </header>
 
         <a
-          className={styles.badgeLink}
+          className={styles.downloadButton}
           href="https://github.com/viraatdas/Hermes/releases/download/v0.1.7/Hermes-v0.1.7.dmg"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            src="/download-badge.svg"
-            alt="Download Hermes"
-            width={180}
-            height={60}
-            priority
-          />
+          Download for macOS
         </a>
 
         <div className={styles.meta}>
