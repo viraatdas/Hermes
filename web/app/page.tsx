@@ -51,26 +51,27 @@ export default function Home() {
             />
           </a>
           <div className={styles.meta}>
-            <span className={styles.muted}>Open source</span>
-            <span className={styles.dot} aria-hidden="true">
-              ·
-            </span>
-            <a
-              className={styles.link}
-              href="https://github.com/viraatdas/Hermes"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <GitHubMark className={styles.githubIcon} />
-              GitHub
-            </a>
-            <span className={styles.dot} aria-hidden="true">
-              ·
-            </span>
-            <span className={styles.muted}>Suggestions / contact:</span>
-            <a className={styles.link} href="mailto:viraat@exla.ai">
-              viraat@exla.ai
-            </a>
+            <div className={styles.metaRow}>
+              <span className={styles.muted}>Open source</span>
+              <span className={styles.dot} aria-hidden="true">
+                ·
+              </span>
+              <a
+                className={styles.link}
+                href="https://github.com/viraatdas/Hermes"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GitHubMark className={styles.githubIcon} />
+                GitHub
+              </a>
+            </div>
+            <div className={styles.metaRow}>
+              <span className={styles.muted}>Suggestions / contact:</span>
+              <a className={styles.link} href="mailto:viraat@exla.ai">
+                viraat@exla.ai
+              </a>
+            </div>
           </div>
         </section>
 
