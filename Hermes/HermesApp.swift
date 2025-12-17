@@ -82,27 +82,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         // Register notification categories with actions
         let joinAction = UNNotificationAction(
             identifier: "JOIN_MEETING",
-            title: "Join & Record",
+            title: "🎙️ Join & Record",
+            options: [.foreground, .authenticationRequired]
+        )
+        
+        let joinOnlyAction = UNNotificationAction(
+            identifier: "JOIN_ONLY",
+            title: "Join Only",
             options: [.foreground]
         )
         
         let dismissAction = UNNotificationAction(
             identifier: "DISMISS",
             title: "Dismiss",
-            options: []
+            options: [.destructive]
         )
         
         let meetingCategory = UNNotificationCategory(
             identifier: "MEETING_REMINDER",
-            actions: [joinAction, dismissAction],
+            actions: [joinAction, joinOnlyAction, dismissAction],
             intentIdentifiers: [],
-            options: []
+            options: [.customDismissAction, .hiddenPreviewsShowTitle]
         )
         
         UNUserNotificationCenter.current().setNotificationCategories([meetingCategory])
         
         // Start calendar sync
-        GoogleCalendarService.shared.startPeriodicSync()
+        Task {
+            await GoogleCalendarService.shared.startPeriodicSync()
+        }
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -111,20 +119,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         print("📬 Notification tapped: \(response.actionIdentifier)")
         print("📬 UserInfo: \(userInfo)")
         
-        // Handle both clicking the notification and the "Join & Record" action
-        if response.actionIdentifier == "JOIN_MEETING" || 
-           response.actionIdentifier == UNNotificationDefaultActionIdentifier {
-            
-            let meetingTitle = userInfo["meetingTitle"] as? String ?? "Meeting"
-            let meetingURL = userInfo["meetingURL"] as? String
-            let meetingId = userInfo["meetingId"] as? String ?? UUID().uuidString
-            
+        let meetingTitle = userInfo["meetingTitle"] as? String ?? "Meeting"
+        let meetingURL = userInfo["meetingURL"] as? String
+        let meetingId = userInfo["meetingId"] as? String ?? UUID().uuidString
+        
+        // Handle different actions
+        switch response.actionIdentifier {
+        case "JOIN_MEETING", UNNotificationDefaultActionIdentifier:
+            // Join AND record
             Task { @MainActor in
-                // Try to find the meeting in state first
                 if let existingMeeting = AppState.shared.upcomingMeetings.first(where: { $0.id == meetingId }) {
                     await MeetingManager.shared.joinAndRecord(meeting: existingMeeting)
                 } else {
-                    // Create a temporary meeting from notification data
                     let meeting = Meeting(
                         id: meetingId,
                         title: meetingTitle,
@@ -136,6 +142,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
                     await MeetingManager.shared.joinAndRecord(meeting: meeting)
                 }
             }
+            
+        case "JOIN_ONLY":
+            // Just open the meeting URL without recording
+            if let urlString = meetingURL, let url = URL(string: urlString) {
+                Task { @MainActor in
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            
+        case "DISMISS":
+            // User explicitly dismissed
+            print("📬 User dismissed notification for: \(meetingTitle)")
+            
+        default:
+            break
         }
         
         completionHandler()

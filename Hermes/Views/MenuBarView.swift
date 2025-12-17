@@ -8,15 +8,9 @@ struct MenuBarView: View {
     @Environment(\.openWindow) private var openWindow
     
     @State private var isRefreshing = false
-    @State private var lastRefreshTime: Date = .distantPast
-    
-    private var menuHeight: CGFloat {
-        var height: CGFloat = calendarService.isAuthenticated ? 480 : 320
-        if appState.isRecording {
-            height += 100 // Extra space for recording controls
-        }
-        return height
-    }
+    @State private var isSaving = false
+    @State private var showSavedMessage = false
+    @State private var savedMeetingTitle: String = ""
     
     var body: some View {
         VStack(spacing: 0) {
@@ -53,13 +47,101 @@ struct MenuBarView: View {
             }
             .padding(.bottom, 12)
             
-            // Recording controls - show when recording
-            if appState.isRecording {
-                RecordingControlsView()
-                    .padding(.bottom, 12)
-            }
-            
             Divider()
+            
+            // Recording controls - show when recording or saving
+            if appState.isRecording || isSaving || showSavedMessage {
+                VStack(spacing: 10) {
+                    if isSaving {
+                        // Saving state
+                        HStack {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                            
+                            Text("Saving recording...")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.secondary)
+                            
+                            Spacer()
+                        }
+                    } else if showSavedMessage {
+                        // Saved confirmation
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                                .font(.system(size: 16))
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Meeting saved!")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(.green)
+                                
+                                Text(savedMeetingTitle)
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                let fileManager = FileManager.default
+                                let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                                let hermesURL = documentsURL.appendingPathComponent("Hermes/Recordings")
+                                NSWorkspace.shared.open(hermesURL)
+                            }) {
+                                Text("Open")
+                                    .font(.system(size: 10, weight: .medium))
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                        }
+                    } else if appState.isRecording {
+                        // Recording state
+                        HStack {
+                            Circle()
+                                .fill(.red)
+                                .frame(width: 10, height: 10)
+                                .overlay(
+                                    Circle()
+                                        .fill(.red.opacity(0.5))
+                                        .frame(width: 16, height: 16)
+                                )
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(appState.currentMeeting?.title ?? "Recording")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .lineLimit(1)
+                                
+                                Text(formatDuration(appState.recordingDuration))
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                stopRecording()
+                            }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "stop.fill")
+                                        .font(.system(size: 10))
+                                    Text("Stop")
+                                        .font(.system(size: 11, weight: .semibold))
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.red)
+                            .disabled(isSaving)
+                        }
+                    }
+                }
+                .padding(.vertical, 12)
+                
+                Divider()
+            }
             
             // Main content
             if calendarService.isAuthenticated {
@@ -73,7 +155,7 @@ struct MenuBarView: View {
                         Spacer()
                         
                         Button(action: refreshCalendar) {
-                            if isRefreshing || calendarService.isLoadingCalendar {
+                            if isRefreshing {
                                 ProgressView()
                                     .scaleEffect(0.5)
                             } else {
@@ -82,23 +164,13 @@ struct MenuBarView: View {
                             }
                         }
                         .buttonStyle(.plain)
-                        .disabled(isRefreshing || calendarService.isLoadingCalendar)
+                        .disabled(isRefreshing)
                     }
                     .padding(.top, 12)
                     
-                    // Show loading state or events
+                    // Always show events if we have them
                     let meetings = appState.upcomingMeetings
-                    if calendarService.isLoadingCalendar && meetings.isEmpty {
-                        VStack(spacing: 12) {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                            Text("Loading calendar...")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 40)
-                    } else if meetings.count > 0 {
+                    if meetings.count > 0 {
                         ScrollView {
                             VStack(spacing: 8) {
                                 ForEach(meetings) { meeting in
@@ -109,10 +181,10 @@ struct MenuBarView: View {
                         .frame(maxHeight: 280)
                     } else {
                         VStack(spacing: 8) {
-                            Text("No upcoming events")
+                            Text("Click to load your calendar")
                                 .font(.system(size: 12))
                                 .foregroundColor(.secondary)
-                            Button("Refresh") {
+                            Button("Load Events") {
                                 refreshCalendar()
                             }
                             .buttonStyle(.borderedProminent)
@@ -148,6 +220,22 @@ struct MenuBarView: View {
             
             // Footer actions
             VStack(spacing: 2) {
+                // Start Recording button - only show when not recording
+                if !appState.isRecording && !isSaving && !showSavedMessage {
+                    Button(action: {
+                        startManualRecording()
+                    }) {
+                        HStack {
+                            Image(systemName: "record.circle")
+                                .foregroundColor(.red)
+                            Text("Start Recording")
+                            Spacer()
+                        }
+                        .padding(.vertical, 6)
+                    }
+                    .buttonStyle(.plain)
+                }
+                
                 // Open Calendar window
                 Button(action: {
                     NSApp.activate(ignoringOtherApps: true)
@@ -160,21 +248,6 @@ struct MenuBarView: View {
                         Text("⌘C")
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)
-                    }
-                    .padding(.vertical, 6)
-                }
-                .buttonStyle(.plain)
-                
-                // Test notification button
-                Button(action: {
-                    Task {
-                        await NotificationService.shared.sendTestNotification()
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "bell.badge")
-                        Text("Test Notification")
-                        Spacer()
                     }
                     .padding(.vertical, 6)
                 }
@@ -212,34 +285,65 @@ struct MenuBarView: View {
                     .padding(.vertical, 4)
                 
                 Button(action: {
-                    // Dispatch async to allow menu to close first
-                    DispatchQueue.main.async {
-                        NSApp.terminate(nil)
-                    }
+                    NSApplication.shared.terminate(nil)
                 }) {
                     HStack {
                         Image(systemName: "power")
-                        Text("Quit Hermes")
+                        Text("Quit")
                         Spacer()
-                        Text("⌘Q")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
                     }
                     .padding(.vertical, 6)
                     .foregroundColor(.red)
                 }
                 .buttonStyle(.plain)
-                .keyboardShortcut("q", modifiers: .command)
             }
             .padding(.top, 8)
         }
         .padding(16)
-        .frame(width: 380, height: menuHeight)
-        .onAppear {
-            // Auto-refresh calendar when menu opens (with 10 second debounce)
-            let timeSinceLastRefresh = Date().timeIntervalSince(lastRefreshTime)
-            if calendarService.isAuthenticated && !isRefreshing && !calendarService.isLoadingCalendar && timeSinceLastRefresh > 10 {
-                refreshCalendar()
+        .frame(width: 380, height: calendarService.isAuthenticated ? 480 : 320)
+    }
+    
+    private func formatDuration(_ duration: TimeInterval) -> String {
+        let minutes = Int(duration) / 60
+        let seconds = Int(duration) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+    
+    private func startManualRecording() {
+        Task {
+            // Create a manual recording meeting
+            let meeting = Meeting(
+                id: UUID().uuidString,
+                title: "Manual Recording",
+                startTime: Date(),
+                endTime: Date().addingTimeInterval(3600),
+                meetingURL: nil,
+                calendarId: nil
+            )
+            
+            // Route through MeetingManager so Stop works (it relies on currentRecording)
+            await MeetingManager.shared.joinAndRecord(meeting: meeting)
+        }
+    }
+    
+    private func stopRecording() {
+        let meetingTitle = appState.currentMeeting?.title ?? "Recording"
+        savedMeetingTitle = meetingTitle
+        isSaving = true
+        
+        Task {
+            await MeetingManager.shared.stopRecording()
+            
+            await MainActor.run {
+                isSaving = false
+                showSavedMessage = true
+            }
+            
+            // Hide the saved message after 3 seconds
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            
+            await MainActor.run {
+                showSavedMessage = false
             }
         }
     }
@@ -247,7 +351,6 @@ struct MenuBarView: View {
     private func refreshCalendar() {
         print("🔄 Refresh button clicked")
         isRefreshing = true
-        lastRefreshTime = Date()
         
         Task { @MainActor in
             do {
@@ -348,88 +451,6 @@ struct EventRow: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         return formatter.string(from: date)
-    }
-}
-
-// MARK: - Recording Controls
-
-struct RecordingControlsView: View {
-    @ObservedObject private var appState = AppState.shared
-    @ObservedObject private var recorder = AudioRecorder.shared
-    @State private var isStopping = false
-    
-    var body: some View {
-        VStack(spacing: 10) {
-            // Recording info
-            HStack {
-                // Pulsing red dot
-                Circle()
-                    .fill(.red)
-                    .frame(width: 10, height: 10)
-                    .modifier(PulseEffect())
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(appState.currentMeeting?.title ?? "Recording")
-                        .font(.system(size: 12, weight: .medium))
-                        .lineLimit(1)
-                    
-                    Text(formatDuration(appState.recordingDuration))
-                        .font(.system(size: 11, weight: .medium, design: .monospaced))
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-            }
-            
-            // Stop button
-            Button(action: stopRecording) {
-                HStack {
-                    if isStopping {
-                        ProgressView()
-                            .scaleEffect(0.7)
-                            .frame(width: 16, height: 16)
-                    } else {
-                        Image(systemName: "stop.fill")
-                    }
-                    Text(isStopping ? "Stopping..." : "Stop Recording")
-                        .font(.system(size: 13, weight: .semibold))
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 8)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(.red)
-            .disabled(isStopping)
-        }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.red.opacity(0.1))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.red.opacity(0.3), lineWidth: 1)
-                )
-        )
-    }
-    
-    private func stopRecording() {
-        isStopping = true
-        Task {
-            await MeetingManager.shared.stopRecording()
-            isStopping = false
-        }
-    }
-    
-    private func formatDuration(_ duration: TimeInterval) -> String {
-        let hours = Int(duration) / 3600
-        let minutes = (Int(duration) % 3600) / 60
-        let seconds = Int(duration) % 60
-        
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        } else {
-            return String(format: "%02d:%02d", minutes, seconds)
-        }
     }
 }
 

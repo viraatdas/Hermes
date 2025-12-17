@@ -42,7 +42,14 @@
     <string>Hermes uses speech recognition to transcribe your meeting recordings.</string>
     <key>NSAppleEventsUsageDescription</key>
     <string>Hermes needs to control other applications to detect screen sharing.</string>
+	<key>HERMES_GOOGLE_CLIENT_ID</key>
+	<string></string>
+	<key>HERMES_GOOGLE_CLIENT_SECRET</key>
+	<string></string>
 </dict>
 </plist>
+
+
+
 
 

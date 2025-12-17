@@ -32,12 +32,7 @@ class NotificationService: ObservableObject {
                 continue
             }
             
-            // Only notify for meetings with video links (Google Meet, Zoom, Teams, etc.)
-            guard meeting.meetingURL != nil else {
-                continue
-            }
-            
-            // Schedule notification 5 minutes before
+            // Schedule notification 5 minutes before (or 2 minutes for testing)
             let notificationTime = meeting.startTime.addingTimeInterval(-5 * 60)
             
             if notificationTime > Date() {
@@ -56,8 +51,9 @@ class NotificationService: ObservableObject {
         let center = UNUserNotificationCenter.current()
         
         let content = UNMutableNotificationContent()
-        content.title = "⚡ Meeting Starting Soon"
-        content.body = "\(meeting.title)\nStarts in 5 minutes"
+        content.title = "🎙️ \(meeting.title)"
+        content.subtitle = "Starting in 5 minutes"
+        content.body = "Click to join and start recording"
         content.sound = .default
         content.categoryIdentifier = "MEETING_REMINDER"
         content.userInfo = [
@@ -67,8 +63,9 @@ class NotificationService: ObservableObject {
             "action": "join_record"
         ]
         
-        // Add action buttons
+        // Make it time sensitive and prominent
         content.interruptionLevel = .timeSensitive
+        content.relevanceScore = 1.0
         
         let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
         let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
@@ -88,8 +85,9 @@ class NotificationService: ObservableObject {
         let center = UNUserNotificationCenter.current()
         
         let content = UNMutableNotificationContent()
-        content.title = "⚡ Meeting Starting Now!"
-        content.body = "\(meeting.title)\nClick to join and record"
+        content.title = "🎙️ \(meeting.title)"
+        content.subtitle = "Starting now!"
+        content.body = "Click to join and start recording"
         content.sound = .default
         content.categoryIdentifier = "MEETING_REMINDER"
         content.userInfo = [
@@ -99,6 +97,7 @@ class NotificationService: ObservableObject {
             "action": "join_record"
         ]
         content.interruptionLevel = .timeSensitive
+        content.relevanceScore = 1.0
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         let request = UNNotificationRequest(identifier: "immediate-\(meeting.id)", content: content, trigger: trigger)
@@ -129,8 +128,9 @@ class NotificationService: ObservableObject {
         }
         
         let content = UNMutableNotificationContent()
-        content.title = "⚡ Test: Meeting Starting!"
-        content.body = "This is a test notification.\nClick to join and record."
+        content.title = "🎙️ Test Meeting"
+        content.subtitle = "Starting now!"
+        content.body = "Click to join and start recording"
         content.sound = .default
         content.categoryIdentifier = "MEETING_REMINDER"
         content.userInfo = [
@@ -139,6 +139,8 @@ class NotificationService: ObservableObject {
             "meetingURL": "https://meet.google.com/test",
             "action": "join_record"
         ]
+        content.interruptionLevel = .timeSensitive
+        content.relevanceScore = 1.0
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false)
         let request = UNNotificationRequest(identifier: "test-notification", content: content, trigger: trigger)

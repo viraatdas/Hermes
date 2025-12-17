@@ -1,0 +1,32 @@
+name: Release DMG
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  dmg:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject Google OAuth credentials (optional)
+        if: ${{ secrets.HERMES_GOOGLE_CLIENT_ID != '' && secrets.HERMES_GOOGLE_CLIENT_SECRET != '' }}
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :HERMES_GOOGLE_CLIENT_ID ${{ secrets.HERMES_GOOGLE_CLIENT_ID }}" "Hermes/Info.plist" || /usr/libexec/PlistBuddy -c "Add :HERMES_GOOGLE_CLIENT_ID string ${{ secrets.HERMES_GOOGLE_CLIENT_ID }}" "Hermes/Info.plist"
+          /usr/libexec/PlistBuddy -c "Set :HERMES_GOOGLE_CLIENT_SECRET ${{ secrets.HERMES_GOOGLE_CLIENT_SECRET }}" "Hermes/Info.plist" || /usr/libexec/PlistBuddy -c "Add :HERMES_GOOGLE_CLIENT_SECRET string ${{ secrets.HERMES_GOOGLE_CLIENT_SECRET }}" "Hermes/Info.plist"
+
+      - name: Build DMG
+        run: |
+          chmod +x scripts/build_dmg.sh
+          scripts/build_dmg.sh
+
+      - name: Upload DMG to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.dmg
+

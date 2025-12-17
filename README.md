@@ -4,6 +4,7 @@ A native macOS menu bar app that records your meetings with one-click join, auto
 
 ![macOS 14+](https://img.shields.io/badge/macOS-14+-blue)
 ![Swift 5](https://img.shields.io/badge/Swift-5-orange)
+[![CI](https://github.com/viraatdas/Hermes/actions/workflows/ci.yml/badge.svg)](https://github.com/viraatdas/Hermes/actions/workflows/ci.yml)
 
 ## Features
 
@@ -35,12 +36,10 @@ open Hermes.xcodeproj
 
 ### 3. Add Your Credentials
 
-Open `Hermes/Services/GoogleCalendarService.swift` and replace the placeholder values:
+Set these keys in `Hermes/Info.plist`:
 
-```swift
-private let clientId = "YOUR_CLIENT_ID.apps.googleusercontent.com"
-private let clientSecret = "YOUR_CLIENT_SECRET"
-```
+- `HERMES_GOOGLE_CLIENT_ID`
+- `HERMES_GOOGLE_CLIENT_SECRET`
 
 ### 4. Build & Run
 
@@ -99,7 +98,7 @@ Hermes/
 
 ### Audio Recording
 - Uses **ScreenCaptureKit** to capture system audio (what you hear from the meeting)
-- Uses **AVAudioEngine** to capture microphone audio (your voice)
+- Uses **AVAudioRecorder** to capture microphone audio (your voice)
 - Both streams are mixed together into a single recording
 - Records in **M4A format** (AAC codec) for quality and compatibility
 

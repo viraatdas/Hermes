@@ -27,12 +27,16 @@ class MeetingManager: ObservableObject {
     
     func joinAndRecord(meeting: Meeting) async {
         // Open the meeting URL
+        var didOpenMeetingURL = false
         if let urlString = meeting.meetingURL, let url = URL(string: urlString) {
             NSWorkspace.shared.open(url)
+            didOpenMeetingURL = true
         }
         
-        // Wait a moment for the meeting app to open
-        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        // Wait a moment for the meeting app to open (not needed for manual recordings)
+        if didOpenMeetingURL {
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+        }
         
         // Start recording
         do {
@@ -75,7 +79,7 @@ class MeetingManager: ObservableObject {
             AppState.shared.currentMeeting = nil
             
             // Create recorded meeting entry
-            var recordedMeeting = RecordedMeeting(
+            let recordedMeeting = RecordedMeeting(
                 id: UUID().uuidString,
                 title: recording.meeting.title,
                 date: recording.startTime,
@@ -168,5 +172,8 @@ enum ExportError: Error, LocalizedError {
         }
     }
 }
+
+
+
 
 

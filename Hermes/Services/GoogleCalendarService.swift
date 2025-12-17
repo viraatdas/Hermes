@@ -5,16 +5,20 @@ import AuthenticationServices
 class GoogleCalendarService: NSObject, ObservableObject {
     static let shared = GoogleCalendarService()
     
-    // Google OAuth credentials - Replace with your own from Google Cloud Console
-    private let clientId = "YOUR_CLIENT_ID.apps.googleusercontent.com"
-    private let clientSecret = "YOUR_CLIENT_SECRET"
+    // Google OAuth credentials are injected via Info.plist so we don't commit secrets.
+    // Set these in Hermes/Info.plist (or inject during CI build).
+    private var clientId: String {
+        Bundle.main.object(forInfoDictionaryKey: "HERMES_GOOGLE_CLIENT_ID") as? String ?? ""
+    }
+    private var clientSecret: String {
+        Bundle.main.object(forInfoDictionaryKey: "HERMES_GOOGLE_CLIENT_SECRET") as? String ?? ""
+    }
     private let redirectURI = "http://127.0.0.1:8089/callback"
     private let scope = "https://www.googleapis.com/auth/calendar.readonly"
     
     @Published var isAuthenticated = false
     @Published var authError: String?
     @Published var isAuthenticating = false
-    @Published var isLoadingCalendar = false
     
     private var accessToken: String?
     private var refreshToken: String?
@@ -22,7 +26,6 @@ class GoogleCalendarService: NSObject, ObservableObject {
     
     private let keychainService = "com.hermes.googleauth"
     private var localServer: LocalAuthServer?
-    private var syncTask: Task<Void, Never>?
     
     private override init() {
         super.init()
@@ -74,6 +77,7 @@ class GoogleCalendarService: NSObject, ObservableObject {
     }
     
     private func buildAuthURL() -> String {
+        guard !clientId.isEmpty else { return "" }
         let baseURL = "https://accounts.google.com/o/oauth2/v2/auth"
         var components = URLComponents(string: baseURL)!
         
@@ -90,6 +94,9 @@ class GoogleCalendarService: NSObject, ObservableObject {
     }
     
     private func exchangeCodeForToken(code: String) async throws {
+        guard !clientId.isEmpty, !clientSecret.isEmpty else {
+            throw AuthError.missingClientCredentials
+        }
         let tokenURL = URL(string: "https://oauth2.googleapis.com/token")!
         var request = URLRequest(url: tokenURL)
         request.httpMethod = "POST"
@@ -133,6 +140,9 @@ class GoogleCalendarService: NSObject, ObservableObject {
     }
     
     private func refreshAccessToken() async throws {
+        guard !clientId.isEmpty, !clientSecret.isEmpty else {
+            throw AuthError.missingClientCredentials
+        }
         guard let refreshToken = refreshToken else {
             throw AuthError.noRefreshToken
         }
@@ -300,47 +310,25 @@ class GoogleCalendarService: NSObject, ObservableObject {
     
     // MARK: - Periodic Sync
     
-    func startPeriodicSync() {
-        // Cancel any existing sync task
-        syncTask?.cancel()
-        
-        // Do initial fetch immediately if authenticated
-        if isAuthenticated {
-            Task {
-                await performCalendarSync()
-            }
-        }
-        
-        // Start background sync task (runs detached from main actor)
-        syncTask = Task.detached { [weak self] in
-            while !Task.isCancelled {
-                // Wait 2 minutes before next sync
-                try? await Task.sleep(nanoseconds: 2 * 60 * 1_000_000_000)
-                
-                guard let self = self else { break }
-                
-                let isAuth = await self.isAuthenticated
-                if isAuth {
-                    await self.performCalendarSync()
+    func startPeriodicSync() async {
+        while true {
+            if isAuthenticated {
+                do {
+                    let meetings = try await fetchUpcomingMeetings()
+                    await MainActor.run {
+                        AppState.shared.upcomingMeetings = meetings
+                    }
+                    
+                    // Schedule notifications for upcoming meetings
+                    await NotificationService.shared.scheduleNotifications(for: meetings)
+                } catch {
+                    print("Failed to sync calendar: \(error)")
                 }
             }
-        }
-    }
-    
-    private func performCalendarSync() async {
-        isLoadingCalendar = true
-        
-        do {
-            let meetings = try await fetchUpcomingMeetings()
-            AppState.shared.upcomingMeetings = meetings
             
-            // Schedule notifications for upcoming meetings
-            await NotificationService.shared.scheduleNotifications(for: meetings)
-        } catch {
-            print("Failed to sync calendar: \(error)")
+            // Sync every 5 minutes
+            try? await Task.sleep(nanoseconds: 5 * 60 * 1_000_000_000)
         }
-        
-        isLoadingCalendar = false
     }
     
     // MARK: - Keychain
@@ -558,6 +546,7 @@ enum AuthError: Error, LocalizedError {
     case notAuthenticated
     case tokenExchangeFailed
     case serverStartFailed
+    case missingClientCredentials
     
     var errorDescription: String? {
         switch self {
@@ -567,6 +556,7 @@ enum AuthError: Error, LocalizedError {
         case .notAuthenticated: return "Not authenticated"
         case .tokenExchangeFailed: return "Failed to exchange token"
         case .serverStartFailed: return "Failed to start auth server"
+        case .missingClientCredentials: return "Missing Google OAuth client credentials (HERMES_GOOGLE_CLIENT_ID / HERMES_GOOGLE_CLIENT_SECRET)"
         }
     }
 }

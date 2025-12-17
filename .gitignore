@@ -13,7 +13,6 @@ Package.resolved
 
 # CocoaPods
 Pods/
-*.xcworkspace
 
 # Carthage
 Carthage/Build/
@@ -34,10 +33,12 @@ Thumbs.db
 .idea/
 *.iml
 
-# Archives
+# Archives / binaries
 *.ipa
 *.dSYM.zip
 *.dSYM
+*.dmg
+dist/
 
 # Playgrounds
 timeline.xctimeline
@@ -47,11 +48,11 @@ playground.xcworkspace
 *.trace
 
 # App-specific
-*.m4a
-*.mp3
-*.wav
 Recordings/
 
-# Secrets (if you create a separate config file)
+# Local secrets
 Secrets.swift
 Config.local.swift
+Hermes/Secrets.swift
+Hermes/Config.local.swift
+
