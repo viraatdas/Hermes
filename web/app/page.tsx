@@ -28,8 +28,11 @@ export default function Home() {
             <span className={styles.badge}>Beta</span>
           </div>
           <p className={styles.subtitle}>
-            A discrete meeting recorder for macOS. Local-first. One click to record and
-            transcribe.
+            A discrete meeting recorder for macOS.
+            <br />
+            Local-first.
+            <br />
+            One click to record and transcribe.
           </p>
         </header>
 
