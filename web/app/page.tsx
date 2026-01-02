@@ -77,7 +77,7 @@ export default function Home() {
 
           <a
             className={styles.downloadButton}
-            href="https://github.com/viraatdas/Hermes/releases/download/v0.1.7/Hermes-v0.1.7.dmg"
+            href="https://github.com/viraatdas/Hermes/releases/download/v0.1.8/Hermes-v0.1.8.dmg"
             target="_blank"
             rel="noopener noreferrer"
           >
