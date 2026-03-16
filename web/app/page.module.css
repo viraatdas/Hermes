@@ -80,6 +80,18 @@
   background: var(--background);
 }
 
+.badgeBeta {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 5px 12px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  color: var(--gold);
+  background: var(--background);
+}
+
 .tagline {
   font-size: clamp(20px, 4vw, 26px);
   font-weight: 400;

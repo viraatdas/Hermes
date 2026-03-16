@@ -122,6 +122,7 @@ export default function Home() {
         <div className={styles.content}>
           <div className={styles.hero}>
             <div className={styles.badgeRow}>
+              <span className={styles.badgeBeta}>Beta</span>
               <span className={styles.badge}>Open Source</span>
               <span className={styles.badge}>macOS</span>
               <span className={styles.badge}>MCP</span>
