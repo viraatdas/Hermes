@@ -91,9 +91,6 @@ class MeetingManager: ObservableObject {
             
             // Save the recording metadata
             AppState.shared.addRecordedMeeting(recordedMeeting)
-            // Reload from disk to ensure the UI reflects the canonical sorted list
-            // (and to avoid any stale state issues in the history view).
-            AppState.shared.loadRecordedMeetings()
             
             currentRecording = nil
             
@@ -111,24 +108,51 @@ class MeetingManager: ObservableObject {
     
     private func transcribeRecording(recordedMeeting: RecordedMeeting, audioURL: URL) async {
         do {
-            let transcriptURL = audioURL.deletingPathExtension().appendingPathExtension("txt")
-            
-            let transcript = try await TranscriptionService.shared.transcribeAndSave(
-                audioURL: audioURL,
-                outputURL: transcriptURL
-            )
-            
+            // Save as .md for agent/tool accessibility
+            let transcriptURL = audioURL.deletingPathExtension().appendingPathExtension("md")
+
+            let rawTranscript = try await TranscriptionService.shared.transcribe(audioURL: audioURL)
+
+            // Build markdown with frontmatter
+            let isoFormatter = ISO8601DateFormatter()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .long
+            dateFormatter.timeStyle = .short
+
+            let minutes = Int(recordedMeeting.duration / 60)
+            let seconds = Int(recordedMeeting.duration) % 60
+
+            let markdown = """
+            ---
+            title: "\(recordedMeeting.title)"
+            date: \(isoFormatter.string(from: recordedMeeting.date))
+            duration: \(String(format: "%d:%02d", minutes, seconds))
+            audio: \(audioURL.lastPathComponent)
+            ---
+
+            # \(recordedMeeting.title)
+
+            **Date:** \(dateFormatter.string(from: recordedMeeting.date))
+            **Duration:** \(String(format: "%d:%02d", minutes, seconds))
+
+            ## Transcript
+
+            \(rawTranscript)
+            """
+
+            try markdown.write(to: transcriptURL, atomically: true, encoding: .utf8)
+
             // Update the recorded meeting with transcript
             var updatedMeeting = recordedMeeting
             updatedMeeting.transcriptFilePath = transcriptURL.path
-            updatedMeeting.transcript = transcript
-            
+            updatedMeeting.transcript = rawTranscript
+
             // Update in app state
             if let index = AppState.shared.recordedMeetings.firstIndex(where: { $0.id == recordedMeeting.id }) {
                 AppState.shared.recordedMeetings[index] = updatedMeeting
                 AppState.shared.saveRecordedMeetings()
             }
-            
+
             print("Transcription completed for: \(recordedMeeting.title)")
         } catch {
             print("Transcription failed: \(error)")

@@ -173,7 +173,7 @@ struct MeetingDetailView: View {
                     Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 44))
                         .foregroundStyle(.linearGradient(
-                            colors: [Color(hex: "FFB347"), Color(hex: "FF6B35")],
+                            colors: [Color(hex: "D4AF37"), Color(hex: "B8860B")],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ))
@@ -311,16 +311,46 @@ struct MeetingDetailView: View {
     
     private func transcribeNow() async {
         guard let audioURL = meeting.audioURL else { return }
-        
+
         do {
-            let transcriptURL = audioURL.deletingPathExtension().appendingPathExtension("txt")
-            _ = try await TranscriptionService.shared.transcribeAndSave(
-                audioURL: audioURL,
-                outputURL: transcriptURL
-            )
-            
-            // Refresh the meeting data
-            AppState.shared.loadRecordedMeetings()
+            let transcriptURL = audioURL.deletingPathExtension().appendingPathExtension("md")
+            let rawTranscript = try await TranscriptionService.shared.transcribe(audioURL: audioURL)
+
+            // Build markdown with frontmatter
+            let isoFormatter = ISO8601DateFormatter()
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .long
+            dateFormatter.timeStyle = .short
+
+            let minutes = Int(meeting.duration / 60)
+            let seconds = Int(meeting.duration) % 60
+
+            let markdown = """
+            ---
+            title: "\(meeting.title)"
+            date: \(isoFormatter.string(from: meeting.date))
+            duration: \(String(format: "%d:%02d", minutes, seconds))
+            audio: \(audioURL.lastPathComponent)
+            ---
+
+            # \(meeting.title)
+
+            **Date:** \(dateFormatter.string(from: meeting.date))
+            **Duration:** \(String(format: "%d:%02d", minutes, seconds))
+
+            ## Transcript
+
+            \(rawTranscript)
+            """
+
+            try markdown.write(to: transcriptURL, atomically: true, encoding: .utf8)
+
+            // Update the meeting in app state
+            if let index = AppState.shared.recordedMeetings.firstIndex(where: { $0.id == meeting.id }) {
+                AppState.shared.recordedMeetings[index].transcriptFilePath = transcriptURL.path
+                AppState.shared.recordedMeetings[index].transcript = rawTranscript
+                AppState.shared.saveRecordedMeetings()
+            }
         } catch {
             print("Transcription failed: \(error)")
         }

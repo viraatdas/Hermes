@@ -7,25 +7,39 @@ struct HermesIconView: View {
     
     var body: some View {
         ZStack {
-            // Base circle with gradient
+            // Base circle with gradient - consistent gold theme
             Circle()
                 .fill(
                     LinearGradient(
-                        colors: isRecording 
-                            ? [Color(hex: "FF3B30"), Color(hex: "FF6B6B")]
-                            : [Color(hex: "FFB347"), Color(hex: "FF6B35")],
+                        colors: isRecording
+                            ? [Color(hex: "DC143C"), Color(hex: "8B0000")]
+                            : [Color(hex: "D4AF37"), Color(hex: "B8860B")],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
                 .frame(width: size, height: size)
-            
-            // Wing icon (represents Hermes' winged helmet)
-            Image(systemName: "wing")
-                .font(.system(size: size * 0.5, weight: .medium))
-                .foregroundStyle(.white)
-                .offset(x: -size * 0.02, y: size * 0.02)
-            
+
+            // Wings + H (matches HermesLogo)
+            ZStack {
+                Image(systemName: "leaf.fill")
+                    .font(.system(size: size * 0.25, weight: .bold))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .rotationEffect(.degrees(45))
+                    .offset(x: -size * 0.2, y: -size * 0.06)
+
+                Image(systemName: "leaf.fill")
+                    .font(.system(size: size * 0.25, weight: .bold))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .rotationEffect(.degrees(-45))
+                    .scaleEffect(x: -1, y: 1)
+                    .offset(x: size * 0.2, y: -size * 0.06)
+
+                Text("H")
+                    .font(.system(size: size * 0.35, weight: .bold, design: .serif))
+                    .foregroundStyle(.white)
+            }
+
             // Recording indicator dot
             if isRecording {
                 Circle()
@@ -41,11 +55,11 @@ struct HermesIconView: View {
 /// Alternative icon using available SF Symbols
 struct HermesMenuBarIcon: View {
     var isRecording: Bool = false
-    
+
     var body: some View {
         Image(systemName: isRecording ? "burst.fill" : "bolt.horizontal.circle.fill")
             .symbolRenderingMode(.hierarchical)
-            .foregroundStyle(isRecording ? .red : .orange)
+            .foregroundStyle(isRecording ? .red : Color(hex: "D4AF37"))
     }
 }
 

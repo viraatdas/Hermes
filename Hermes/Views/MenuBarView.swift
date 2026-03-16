@@ -202,7 +202,9 @@ struct MenuBarView: View {
             .padding(.top, 8)
         }
         .padding(16)
-        .frame(width: 380, height: calendarService.isAuthenticated ? 480 : 320)
+        .frame(width: 380)
+        .frame(minHeight: calendarService.isAuthenticated ? 380 : 280,
+               maxHeight: calendarService.isAuthenticated ? 560 : 320)
     }
     
     private func refreshCalendar() {

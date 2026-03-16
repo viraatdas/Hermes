@@ -50,29 +50,93 @@ function MailIcon() {
   );
 }
 
+function MarkdownIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+      <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z" />
+      <path d="M9 15l2-2 2 2" />
+      <path d="M11 13v4" />
+    </svg>
+  );
+}
+
+function AgentIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 8V4H8" />
+      <rect width="16" height="12" x="4" y="8" rx="2" />
+      <path d="M2 14h2" />
+      <path d="M20 14h2" />
+      <path d="M15 13v2" />
+      <path d="M9 13v2" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
 export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.gradientOrb} />
-      
+
       <main className={styles.main}>
         <div className={styles.content}>
           <div className={styles.hero}>
-            <span className={styles.badge}>Beta</span>
+            <div className={styles.badgeRow}>
+              <span className={styles.badge}>Open Source</span>
+              <span className={styles.badge}>macOS</span>
+            </div>
+
             <h1 className={styles.title}>Hermes</h1>
 
             <p className={styles.tagline}>
-              A discrete meeting recorder for macOS. 
-              One click to capture and transcribe.
+              Meeting notes for the age of agents.
             </p>
 
-            <div className={styles.features}>
-              <span className={styles.feature}>Local-first</span>
-              <span className={styles.featureDot} />
-              <span className={styles.feature}>Privacy-focused</span>
-              <span className={styles.featureDot} />
-              <span className={styles.feature}>Open source</span>
-            </div>
+            <p className={styles.subtitle}>
+              Record, transcribe, and save every meeting as a local markdown
+              file. Your notes stay on your machine, readable by any agent or
+              tool.
+            </p>
           </div>
 
           <a
@@ -84,6 +148,71 @@ export default function Home() {
             <AppleIcon />
             <span>Download for macOS</span>
           </a>
+
+          <div className={styles.features}>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <MarkdownIcon />
+              </div>
+              <h3 className={styles.featureTitle}>Plain Markdown</h3>
+              <p className={styles.featureDesc}>
+                Transcripts saved as .md files with frontmatter. No proprietary
+                formats, no encrypted databases.
+              </p>
+            </div>
+
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <AgentIcon />
+              </div>
+              <h3 className={styles.featureTitle}>Agent-Ready</h3>
+              <p className={styles.featureDesc}>
+                Your AI tools can read, search, and act on your meeting notes
+                directly from the filesystem.
+              </p>
+            </div>
+
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <LockIcon />
+              </div>
+              <h3 className={styles.featureTitle}>Local-First</h3>
+              <p className={styles.featureDesc}>
+                Everything runs on-device. On-device transcription via Apple
+                Speech. No cloud, no accounts required.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.codeBlock}>
+            <div className={styles.codeHeader}>
+              <span className={styles.codeDot} />
+              <span className={styles.codeDot} />
+              <span className={styles.codeDot} />
+              <span className={styles.codePath}>
+                ~/Documents/Hermes/Recordings/standup_2026-03-16.md
+              </span>
+            </div>
+            <pre className={styles.codeContent}>
+{`---
+title: "Morning Standup"
+date: 2026-03-16T09:00:00Z
+duration: 12:34
+audio: standup_2026-03-16.m4a
+---
+
+# Morning Standup
+
+**Date:** March 16, 2026 at 9:00 AM
+**Duration:** 12:34
+
+## Transcript
+
+Sarah mentioned the API migration is on track
+for Thursday. Dave flagged a blocker on the
+auth service ...`}
+            </pre>
+          </div>
         </div>
       </main>
 
@@ -97,13 +226,10 @@ export default function Home() {
           <GitHubIcon />
           <span>GitHub</span>
         </a>
-        
+
         <div className={styles.footerDivider} />
-        
-        <a
-          className={styles.footerLink}
-          href="mailto:viraat@exla.ai"
-        >
+
+        <a className={styles.footerLink} href="mailto:viraat@exla.ai">
           <MailIcon />
           <span>viraat@exla.ai</span>
         </a>

@@ -485,9 +485,9 @@ class LocalAuthServer {
                         <html>
                         <head>
                             <style>
-                                body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #FFB347, #FF6B35); }
+                                body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #D4AF37, #B8860B); }
                                 .card { background: white; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-                                h1 { color: #FF6B35; margin: 0 0 10px 0; }
+                                h1 { color: #B8860B; margin: 0 0 10px 0; }
                                 p { color: #666; margin: 0; }
                                 .icon { font-size: 48px; margin-bottom: 20px; }
                             </style>

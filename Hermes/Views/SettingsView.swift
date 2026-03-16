@@ -190,17 +190,17 @@ struct SettingsView: View {
             Text("Hermes")
                 .font(.system(size: 28, weight: .bold, design: .serif))
             
-            Text("Discrete Meeting Recorder")
+            Text("Meeting notes for the age of agents")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-            
-            Text("Version 1.0.0")
+
+            Text("Version 0.2.0")
                 .font(.caption)
                 .foregroundColor(.secondary)
-            
+
             Spacer()
-            
-            Text("© 2024 Hermes")
+
+            Text("© 2026 Hermes")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }

@@ -26,55 +26,46 @@ class TranscriptionService: ObservableObject {
         guard await requestAuthorization() else {
             throw TranscriptionError.notAuthorized
         }
-        
+
         guard let recognizer = speechRecognizer, recognizer.isAvailable else {
             throw TranscriptionError.recognizerUnavailable
         }
-        
+
         isTranscribing = true
         transcriptionProgress = 0
         currentTranscript = ""
-        
+
         defer {
             isTranscribing = false
         }
-        
+
         let request = SFSpeechURLRecognitionRequest(url: audioURL)
         request.shouldReportPartialResults = true
         request.addsPunctuation = true
-        
+
         return try await withCheckedThrowingContinuation { continuation in
-            var finalTranscript = ""
-            
+            var hasResumed = false
+
             recognizer.recognitionTask(with: request) { [weak self] result, error in
-                if let error = error {
+                guard !hasResumed else { return }
+
+                if let result = result {
+                    let transcript = result.bestTranscription.formattedString
+
+                    Task { @MainActor in
+                        self?.currentTranscript = transcript
+                    }
+
+                    if result.isFinal {
+                        hasResumed = true
+                        continuation.resume(returning: transcript)
+                    }
+                } else if let error = error {
+                    hasResumed = true
                     continuation.resume(throwing: error)
-                    return
-                }
-                
-                guard let result = result else { return }
-                
-                let transcript = result.bestTranscription.formattedString
-                
-                Task { @MainActor in
-                    self?.currentTranscript = transcript
-                }
-                
-                if result.isFinal {
-                    finalTranscript = transcript
-                    continuation.resume(returning: finalTranscript)
                 }
             }
         }
-    }
-    
-    func transcribeAndSave(audioURL: URL, outputURL: URL) async throws -> String {
-        let transcript = try await transcribe(audioURL: audioURL)
-        
-        // Save transcript to file
-        try transcript.write(to: outputURL, atomically: true, encoding: .utf8)
-        
-        return transcript
     }
 }
 
