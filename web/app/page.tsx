@@ -124,18 +124,19 @@ export default function Home() {
             <div className={styles.badgeRow}>
               <span className={styles.badge}>Open Source</span>
               <span className={styles.badge}>macOS</span>
+              <span className={styles.badge}>MCP</span>
             </div>
 
             <h1 className={styles.title}>Hermes</h1>
 
             <p className={styles.tagline}>
-              Meeting notes for the age of agents.
+              The meeting recorder built for agents.
             </p>
 
             <p className={styles.subtitle}>
-              Record, transcribe, and save every meeting as a local markdown
-              file. Your notes stay on your machine, readable by any agent or
-              tool.
+              Record and transcribe meetings to local markdown files. A built-in
+              MCP server gives Claude, Cursor, and any AI tool direct access to
+              search, read, and act on your notes.
             </p>
           </div>
 
@@ -152,23 +153,24 @@ export default function Home() {
           <div className={styles.features}>
             <div className={styles.featureCard}>
               <div className={styles.featureIcon}>
-                <MarkdownIcon />
+                <AgentIcon />
               </div>
-              <h3 className={styles.featureTitle}>Plain Markdown</h3>
+              <h3 className={styles.featureTitle}>MCP Server</h3>
               <p className={styles.featureDesc}>
-                Transcripts saved as .md files with frontmatter. No proprietary
-                formats, no encrypted databases.
+                Ships with a Model Context Protocol server. Claude Desktop,
+                Cursor, and Claude Code can search, read, and enrich your
+                meetings as tools.
               </p>
             </div>
 
             <div className={styles.featureCard}>
               <div className={styles.featureIcon}>
-                <AgentIcon />
+                <MarkdownIcon />
               </div>
-              <h3 className={styles.featureTitle}>Agent-Ready</h3>
+              <h3 className={styles.featureTitle}>Plain Markdown</h3>
               <p className={styles.featureDesc}>
-                Built-in MCP server lets Claude Desktop, Cursor, and other AI
-                tools search, read, and enrich your meeting notes.
+                Transcripts saved as .md files with YAML frontmatter. No
+                proprietary formats. Any agent can read them directly.
               </p>
             </div>
 
@@ -178,22 +180,44 @@ export default function Home() {
               </div>
               <h3 className={styles.featureTitle}>Local-First</h3>
               <p className={styles.featureDesc}>
-                Everything runs on-device. On-device transcription via Apple
-                Speech. No cloud, no accounts required.
+                Everything on-device. On-device transcription via Apple Speech.
+                Agents connect locally via stdio. No cloud required.
               </p>
             </div>
           </div>
 
-          <div className={styles.codeBlock}>
-            <div className={styles.codeHeader}>
-              <span className={styles.codeDot} />
-              <span className={styles.codeDot} />
-              <span className={styles.codeDot} />
-              <span className={styles.codePath}>
-                ~/Documents/Hermes/Recordings/standup_2026-03-16.md
-              </span>
+          <div className={styles.codeBlockGroup}>
+            <div className={styles.codeBlock}>
+              <div className={styles.codeHeader}>
+                <span className={styles.codeDot} />
+                <span className={styles.codeDot} />
+                <span className={styles.codeDot} />
+                <span className={styles.codePath}>
+                  claude_desktop_config.json
+                </span>
+              </div>
+              <pre className={styles.codeContent}>
+{`{
+  "mcpServers": {
+    "hermes": {
+      "command": "node",
+      "args": ["hermes/agent/dist/src/mcp/server.js"]
+    }
+  }
+}`}
+              </pre>
             </div>
-            <pre className={styles.codeContent}>
+
+            <div className={styles.codeBlock}>
+              <div className={styles.codeHeader}>
+                <span className={styles.codeDot} />
+                <span className={styles.codeDot} />
+                <span className={styles.codeDot} />
+                <span className={styles.codePath}>
+                  ~/Documents/Hermes/Recordings/standup_2026-03-16.md
+                </span>
+              </div>
+              <pre className={styles.codeContent}>
 {`---
 title: "Morning Standup"
 date: 2026-03-16T09:00:00Z
@@ -201,17 +225,24 @@ duration: 12:34
 audio: standup_2026-03-16.m4a
 ---
 
-# Morning Standup
-
-**Date:** March 16, 2026 at 9:00 AM
-**Duration:** 12:34
-
 ## Transcript
 
 Sarah mentioned the API migration is on track
 for Thursday. Dave flagged a blocker on the
-auth service ...`}
-            </pre>
+auth service ...
+
+## Summary  (auto-generated)
+
+API migration on track. Auth service blocker
+identified — Dave and Alice pairing on fix.
+
+## Action Items  (auto-generated)
+
+- [ ] Dave & Alice: debug auth token refresh
+- [ ] Sarah: update migration timeline
+- [ ] All: review dashboard mockups by Wed`}
+              </pre>
+            </div>
           </div>
         </div>
       </main>
