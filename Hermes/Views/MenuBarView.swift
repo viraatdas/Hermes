@@ -140,21 +140,6 @@ struct MenuBarView: View {
                 }
                 .buttonStyle(.plain)
                 
-                // Test notification button
-                Button(action: {
-                    Task {
-                        await NotificationService.shared.sendTestNotification()
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "bell.badge")
-                        Text("Test Notification")
-                        Spacer()
-                    }
-                    .padding(.vertical, 6)
-                }
-                .buttonStyle(.plain)
-                
                 Button(action: {
                     let fileManager = FileManager.default
                     let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -171,9 +156,7 @@ struct MenuBarView: View {
                 }
                 .buttonStyle(.plain)
                 
-                Button(action: {
-                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-                }) {
+                SettingsLink {
                     HStack {
                         Image(systemName: "gear")
                         Text("Settings")

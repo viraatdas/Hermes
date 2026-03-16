@@ -484,20 +484,29 @@ class LocalAuthServer {
                         <!DOCTYPE html>
                         <html>
                         <head>
+                            <meta charset="utf-8">
+                            <title>Hermes</title>
                             <style>
-                                body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #D4AF37, #B8860B); }
-                                .card { background: white; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-                                h1 { color: #B8860B; margin: 0 0 10px 0; }
-                                p { color: #666; margin: 0; }
-                                .icon { font-size: 48px; margin-bottom: 20px; }
+                                * { margin: 0; padding: 0; box-sizing: border-box; }
+                                body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0a0a0a; color: #fafafa; }
+                                .container { text-align: center; padding: 48px; }
+                                .logo { font-size: 48px; font-weight: 200; letter-spacing: -0.04em; font-family: Georgia, 'Times New Roman', serif; margin-bottom: 32px; }
+                                .logo span { color: #D4AF37; }
+                                .check { width: 64px; height: 64px; border-radius: 50%; background: rgba(212, 175, 55, 0.1); border: 2px solid #D4AF37; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
+                                .check svg { width: 28px; height: 28px; stroke: #D4AF37; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+                                h1 { font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+                                p { font-size: 14px; color: #888; line-height: 1.5; }
+                                .fade { animation: fadeIn 0.4s ease-out; }
+                                @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
                             </style>
+                            <script>setTimeout(function(){ window.close(); }, 3000);</script>
                         </head>
                         <body>
-                            <div class="card">
-                                <div class="icon">⚡</div>
-                                <h1>Connected!</h1>
-                                <p>Hermes is now connected to your Google Calendar.</p>
-                                <p style="margin-top: 10px; font-size: 14px;">You can close this window.</p>
+                            <div class="container fade">
+                                <div class="logo"><span>H</span>ermes</div>
+                                <div class="check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                <h1>Calendar connected</h1>
+                                <p>Your Google Calendar is synced with Hermes.<br>This window will close automatically.</p>
                             </div>
                         </body>
                         </html>

@@ -107,6 +107,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         
         UNUserNotificationCenter.current().setNotificationCategories([meetingCategory])
         
+        // Enable launch at login on first run
+        if !UserDefaults.standard.bool(forKey: "hasSetLaunchAtLogin") {
+            LaunchAtLoginService.shared.isEnabled = true
+            UserDefaults.standard.set(true, forKey: "hasSetLaunchAtLogin")
+        }
+
         // Start calendar sync
         Task {
             await GoogleCalendarService.shared.startPeriodicSync()
