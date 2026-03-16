@@ -50,6 +50,10 @@ playground.xcworkspace
 # App-specific
 Recordings/
 
+# Agent build artifacts
+agent/node_modules/
+agent/dist/
+
 # Local secrets
 Secrets.swift
 Config.local.swift

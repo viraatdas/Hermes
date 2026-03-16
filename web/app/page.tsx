@@ -167,8 +167,8 @@ export default function Home() {
               </div>
               <h3 className={styles.featureTitle}>Agent-Ready</h3>
               <p className={styles.featureDesc}>
-                Your AI tools can read, search, and act on your meeting notes
-                directly from the filesystem.
+                Built-in MCP server lets Claude Desktop, Cursor, and other AI
+                tools search, read, and enrich your meeting notes.
               </p>
             </div>
 

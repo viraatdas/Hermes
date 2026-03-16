@@ -1,0 +1,29 @@
+[
+  {
+    "id": "abc-123-def",
+    "title": "Morning Standup",
+    "date": 796723200,
+    "duration": 754,
+    "audioFilePath": "/Users/test/Documents/Hermes/Recordings/standup_2026-03-16.m4a",
+    "transcriptFilePath": "standup_2026-03-16.md",
+    "transcript": null
+  },
+  {
+    "id": "ghi-456-jkl",
+    "title": "Sprint Planning",
+    "date": 796636800,
+    "duration": 3600,
+    "audioFilePath": "/Users/test/Documents/Hermes/Recordings/sprint_2026-03-15.m4a",
+    "transcriptFilePath": "sprint_2026-03-15.md",
+    "transcript": null
+  },
+  {
+    "id": "mno-789-pqr",
+    "title": "1:1 with Manager",
+    "date": 796550400,
+    "duration": 1800,
+    "audioFilePath": "/Users/test/Documents/Hermes/Recordings/one_on_one_2026-03-14.m4a",
+    "transcriptFilePath": null,
+    "transcript": "Discussed project timeline and upcoming deadlines. Manager mentioned the Q2 goals review is next week."
+  }
+]

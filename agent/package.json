@@ -1,0 +1,28 @@
+{
+  "name": "hermes-agent",
+  "version": "0.1.0",
+  "description": "MCP server, CLI, and LLM enrichment for Hermes meeting transcripts",
+  "type": "module",
+  "bin": {
+    "hermes": "./dist/bin/hermes.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "serve": "node dist/src/mcp/server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "commander": "^13.1.0",
+    "gray-matter": "^4.0.3",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}
