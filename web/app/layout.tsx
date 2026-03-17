@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hermes - Meeting notes for the age of agents",
-  description: "Record, transcribe, and save meetings as local markdown files. Your notes stay on your machine, readable by any agent or tool. Open source macOS app.",
+  title: "Hermes - The meeting recorder built for agents",
+  description: "Record and transcribe meetings to local markdown files. Built-in MCP server gives Claude, Cursor, and any AI tool direct access to your notes. Open source macOS app.",
   metadataBase: new URL("https://hermes.viraat.dev"),
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
@@ -22,15 +22,15 @@ export const metadata: Metadata = {
     apple: ["/apple-icon.png"],
   },
   openGraph: {
-    title: "Hermes - Meeting notes for the age of agents",
-    description: "Record, transcribe, and save meetings as local markdown files. Your notes stay on your machine, readable by any agent or tool.",
+    title: "Hermes - The meeting recorder built for agents",
+    description: "Record and transcribe meetings to local markdown files. Built-in MCP server gives Claude, Cursor, and any AI tool direct access to your notes.",
     type: "website",
-    images: [{ url: "/og-image.png", width: 1200, height: 1200, alt: "Hermes" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Hermes - The meeting recorder built for agents" }],
   },
   twitter: {
-    card: "summary",
-    title: "Hermes - Meeting notes for the age of agents",
-    description: "Record, transcribe, and save meetings as local markdown files. Your notes stay on your machine, readable by any agent or tool.",
+    card: "summary_large_image",
+    title: "Hermes - The meeting recorder built for agents",
+    description: "Record and transcribe meetings to local markdown files. Built-in MCP server gives Claude, Cursor, and any AI tool direct access to your notes.",
     images: ["/tw-image.png"],
   },
 };
