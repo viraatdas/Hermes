@@ -44,22 +44,6 @@ fi
 DMG_STAGE="${BUILD_DIR}/dmg-stage"
 mkdir -p "${DMG_STAGE}"
 cp -R "${APP_PATH}" "${DMG_STAGE}/"
-ln -s /Applications "${DMG_STAGE}/Applications"
-
-ICONSET_DIR="${BUILD_DIR}/Hermes.iconset"
-ICNS_PATH="${BUILD_DIR}/Hermes.icns"
-mkdir -p "${ICONSET_DIR}"
-
-# Reuse existing app icon PNGs to create a DMG volume icon.
-cp -f "${ROOT_DIR}/Hermes/Assets.xcassets/AppIcon.appiconset/"icon_*.png "${ICONSET_DIR}/" 2>/dev/null || true
-if compgen -G "${ICONSET_DIR}/icon_*.png" > /dev/null; then
-  iconutil -c icns "${ICONSET_DIR}" -o "${ICNS_PATH}" >/dev/null 2>&1 || true
-fi
-
-# Copy pre-made DMG background image (gold arrow, Hermes branding)
-DMG_BG_DIR="${DMG_STAGE}/.background"
-mkdir -p "${DMG_BG_DIR}"
-cp "${ROOT_DIR}/scripts/dmg-background.png" "${DMG_BG_DIR}/background.png"
 
 # Optional codesign for distribution (Developer ID Application)
 if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
@@ -70,59 +54,9 @@ else
   echo "No CODESIGN_IDENTITY provided; building unsigned DMG."
 fi
 
-# Create initial DMG (read-write) so we can customize the window
+# Create styled DMG using appdmg (works headless in CI — no AppleScript needed)
 DMG_PATH="${DIST_DIR}/${DMG_NAME}"
-TMP_DMG="${BUILD_DIR}/tmp-rw.dmg"
-
-hdiutil create \
-  -volname "Hermes" \
-  -srcfolder "${DMG_STAGE}" \
-  -ov \
-  -format UDRW \
-  "${TMP_DMG}"
-
-# Mount and apply Finder window customization
-MOUNT_DIR="${BUILD_DIR}/mnt"
-mkdir -p "${MOUNT_DIR}"
-DEVICE=$(hdiutil attach -readwrite -noverify -nobrowse -mountpoint "${MOUNT_DIR}" "${TMP_DMG}" | awk 'NR==1{print $1}')
-
-# Set volume icon
-if [[ -f "${ICNS_PATH}" ]]; then
-  cp -f "${ICNS_PATH}" "${MOUNT_DIR}/.VolumeIcon.icns"
-  xcrun SetFile -a C "${MOUNT_DIR}" || true
-fi
-
-# Apply Finder view settings via AppleScript for the drag-to-Applications layout
-osascript <<APPLESCRIPT || true
-tell application "Finder"
-    tell disk "Hermes"
-        open
-        set current view of container window to icon view
-        set toolbar visible of container window to false
-        set statusbar visible of container window to false
-        set the bounds of container window to {100, 100, 760, 500}
-        set viewOptions to the icon view options of container window
-        set arrangement of viewOptions to not arranged
-        set icon size of viewOptions to 96
-        set background picture of viewOptions to file ".background:background.png"
-        set position of item "Hermes.app" of container window to {170, 200}
-        set position of item "Applications" of container window to {490, 200}
-        close
-        open
-        update without registering applications
-        delay 1
-        close
-    end tell
-end tell
-APPLESCRIPT
-
-# Hide the background directory
-xcrun SetFile -a V "${MOUNT_DIR}/.background" || true
-
-hdiutil detach "${DEVICE}" -quiet || hdiutil detach "${MOUNT_DIR}" -quiet || true
-
-# Convert to compressed read-only DMG
-hdiutil convert "${TMP_DMG}" -format UDZO -o "${DMG_PATH}" -ov >/dev/null
+npx appdmg "${ROOT_DIR}/scripts/dmg-config.json" "${DMG_PATH}"
 
 if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
   echo "Signing DMG with identity: ${CODESIGN_IDENTITY}"

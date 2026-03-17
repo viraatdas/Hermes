@@ -1,0 +1,13 @@
+{
+  "title": "Hermes",
+  "background": "dmg-background.png",
+  "icon-size": 96,
+  "window": {
+    "position": { "x": 200, "y": 120 },
+    "size": { "width": 660, "height": 400 }
+  },
+  "contents": [
+    { "x": 170, "y": 200, "type": "file", "path": "../build/dmg-stage/Hermes.app" },
+    { "x": 490, "y": 200, "type": "link", "path": "/Applications" }
+  ]
+}
