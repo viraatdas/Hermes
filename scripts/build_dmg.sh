@@ -56,59 +56,10 @@ if compgen -G "${ICONSET_DIR}/icon_*.png" > /dev/null; then
   iconutil -c icns "${ICONSET_DIR}" -o "${ICNS_PATH}" >/dev/null 2>&1 || true
 fi
 
-# Generate DMG background image with drag-to-Applications arrow
-BG_PATH="${BUILD_DIR}/dmg-background.png"
+# Copy pre-made DMG background image (gold arrow, Hermes branding)
 DMG_BG_DIR="${DMG_STAGE}/.background"
 mkdir -p "${DMG_BG_DIR}"
-
-python3 - "${BG_PATH}" <<'PYEOF'
-import struct, zlib, sys
-
-W, H = 660, 400
-# Create a minimal PNG with the arrow and text rendered via macOS later
-# We'll use an AppleScript approach instead for the window layout
-# For now, create a dark background PNG
-
-def create_png(width, height, filepath):
-    def chunk(chunk_type, data):
-        c = chunk_type + data
-        return struct.pack('>I', len(data)) + c + struct.pack('>I', zlib.crc32(c) & 0xffffffff)
-
-    header = b'\x89PNG\r\n\x1a\n'
-    ihdr = chunk(b'IHDR', struct.pack('>IIBBBBB', width, height, 8, 2, 0, 0, 0))
-
-    # Dark background with subtle gradient
-    rows = []
-    for y in range(height):
-        row = bytearray([0])  # filter byte
-        t = y / height
-        for x in range(width):
-            r = int(10 + t * 5)
-            g = int(10 + t * 5)
-            b = int(10 + t * 5)
-            # Subtle gold line at center
-            cx = width // 2
-            dx = abs(x - cx)
-            if height * 0.45 < y < height * 0.55 and 80 < dx < 200:
-                alpha = max(0, 1 - abs(y - height * 0.5) / (height * 0.05))
-                alpha *= max(0, 1 - (dx - 80) / 120)
-                r = int(r + (212 - r) * alpha * 0.3)
-                g = int(g + (175 - g) * alpha * 0.3)
-                b = int(b + (55 - b) * alpha * 0.3)
-            row.extend([min(255, r), min(255, g), min(255, b)])
-        rows.append(bytes(row))
-
-    raw = b''.join(rows)
-    idat = chunk(b'IDAT', zlib.compress(raw, 9))
-    iend = chunk(b'IEND', b'')
-
-    with open(filepath, 'wb') as f:
-        f.write(header + ihdr + idat + iend)
-
-create_png(W, H, sys.argv[1])
-PYEOF
-
-cp "${BG_PATH}" "${DMG_BG_DIR}/background.png"
+cp "${ROOT_DIR}/scripts/dmg-background.png" "${DMG_BG_DIR}/background.png"
 
 # Optional codesign for distribution (Developer ID Application)
 if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
