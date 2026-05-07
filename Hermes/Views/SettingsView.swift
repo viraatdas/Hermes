@@ -244,6 +244,15 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
+
+                Button("Use Local Laptop Credentials") {
+                    if anthropicService.importLocalCredentials() {
+                        anthropicStatus = "Imported local Anthropic key"
+                    } else {
+                        anthropicStatus = anthropicService.lastError
+                    }
+                }
+                .disabled(anthropicService.hasAPIKey)
             } header: {
                 Text("Anthropic")
             }
@@ -273,7 +282,7 @@ struct SettingsView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            Text("Version 0.2.5")
+            Text("Version 0.2.6")
                 .font(.caption)
                 .foregroundColor(.secondary)
 

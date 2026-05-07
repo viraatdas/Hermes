@@ -27,6 +27,7 @@
 		AAA0000018 /* LiveTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000021 /* LiveTranscriptionService.swift */; };
 		AAA0000019 /* MeetingNotesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000022 /* MeetingNotesStore.swift */; };
 		AAA0000020 /* MeetingNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000023 /* MeetingNotesView.swift */; };
+		AAA0000021 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000024 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		BBB0000021 /* LiveTranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTranscriptionService.swift; sourceTree = "<group>"; };
 		BBB0000022 /* MeetingNotesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingNotesStore.swift; sourceTree = "<group>"; };
 		BBB0000023 /* MeetingNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingNotesView.swift; sourceTree = "<group>"; };
+		BBB0000024 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 				BBB0000017 /* HermesIconView.swift */,
 				BBB0000019 /* CalendarView.swift */,
 				BBB0000023 /* MeetingNotesView.swift */,
+				BBB0000024 /* OnboardingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 				AAA0000018 /* LiveTranscriptionService.swift in Sources */,
 				AAA0000019 /* MeetingNotesStore.swift in Sources */,
 				AAA0000020 /* MeetingNotesView.swift in Sources */,
+				AAA0000021 /* OnboardingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

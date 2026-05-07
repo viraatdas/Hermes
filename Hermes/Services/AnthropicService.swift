@@ -16,6 +16,10 @@ class AnthropicService: ObservableObject {
         hasAPIKey = loadAPIKey() != nil
     }
 
+    var credentialSourceDescription: String {
+        hasAPIKey ? "Stored in macOS Keychain" : "No local Anthropic key found"
+    }
+
     func saveAPIKey(_ key: String) {
         let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, let data = trimmed.data(using: .utf8) else { return }
@@ -43,6 +47,24 @@ class AnthropicService: ObservableObject {
         ]
         SecItemDelete(query as CFDictionary)
         hasAPIKey = false
+    }
+
+    @discardableResult
+    func importLocalCredentials() -> Bool {
+        if loadAPIKey() != nil {
+            hasAPIKey = true
+            lastError = nil
+            return true
+        }
+
+        if let envKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"],
+           !envKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            saveAPIKey(envKey)
+            return true
+        }
+
+        lastError = "No local ANTHROPIC_API_KEY was available to import."
+        return false
     }
 
     func testConnection() async throws -> String {
@@ -214,4 +236,3 @@ enum AnthropicError: Error, LocalizedError {
         }
     }
 }
-

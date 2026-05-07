@@ -117,6 +117,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         Task {
             await GoogleCalendarService.shared.startPeriodicSync()
         }
+
+        Task { @MainActor in
+            _ = AnthropicService.shared.importLocalCredentials()
+            OnboardingWindowPresenter.openIfNeeded()
+        }
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -172,4 +177,3 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         completionHandler([.banner, .sound])
     }
 }
-

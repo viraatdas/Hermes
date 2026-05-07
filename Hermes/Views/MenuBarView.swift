@@ -171,6 +171,18 @@ struct MenuBarView: View {
                     .padding(.vertical, 6)
                 }
                 .buttonStyle(.plain)
+
+                Button(action: {
+                    OnboardingWindowPresenter.open()
+                }) {
+                    HStack {
+                        Image(systemName: "person.crop.circle.badge.checkmark")
+                        Text("Set Up Account")
+                        Spacer()
+                    }
+                    .padding(.vertical, 6)
+                }
+                .buttonStyle(.plain)
                 
                 Divider()
                     .padding(.vertical, 4)
