@@ -47,6 +47,12 @@ struct MenuBarView: View {
             Divider()
             
             // Main content
+            if appState.isRecording {
+                recordingSection
+                Divider()
+                    .padding(.vertical, 10)
+            }
+
             if calendarService.isAuthenticated {
                 // Calendar events section
                 VStack(alignment: .leading, spacing: 10) {
@@ -212,6 +218,44 @@ struct MenuBarView: View {
             
             isRefreshing = false
         }
+    }
+
+    private var recordingSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(appState.currentMeeting?.title ?? "Recording")
+                        .font(.system(size: 13, weight: .semibold))
+                        .lineLimit(1)
+
+                    Text(AudioRecorder.shared.formattedDuration)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Button(action: {
+                    MeetingNotesWindowPresenter.open()
+                }) {
+                    Image(systemName: "note.text")
+                }
+                .buttonStyle(.bordered)
+                .help("Open Notes")
+
+                Button(action: {
+                    Task {
+                        await MeetingManager.shared.stopRecording()
+                    }
+                }) {
+                    Image(systemName: "stop.fill")
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
+                .help("Stop Recording")
+            }
+        }
+        .padding(.top, 12)
     }
 }
 

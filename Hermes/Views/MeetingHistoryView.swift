@@ -99,6 +99,7 @@ struct MeetingDetailView: View {
     @State private var isPlaying = false
     @State private var showingTranscript = true
     @State private var isExporting = false
+    @State private var notesText = ""
     
     var body: some View {
         ScrollView {
@@ -119,14 +120,22 @@ struct MeetingDetailView: View {
                 } else {
                     transcriptionPendingSection
                 }
+
+                Divider()
+
+                notesSection
             }
             .padding(24)
         }
         .navigationTitle(meeting.title)
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
+                Button(action: shareMeeting) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+
                 Button(action: exportAudio) {
-                    Label("Export", systemImage: "square.and.arrow.up")
+                    Label("Export Audio", systemImage: "waveform")
                 }
                 .disabled(isExporting)
                 
@@ -137,10 +146,16 @@ struct MeetingDetailView: View {
         }
         .onAppear {
             setupPlayer()
+            notesText = MeetingNotesStore.shared.load(meeting: meeting)
+        }
+        .onChange(of: meeting.id) { _, _ in
+            notesText = MeetingNotesStore.shared.load(meeting: meeting)
+            setupPlayer()
         }
         .onDisappear {
             player?.pause()
             player = nil
+            _ = MeetingNotesStore.shared.save(notes: notesText, for: meeting)
         }
     }
     
@@ -256,6 +271,43 @@ struct MeetingDetailView: View {
             .cornerRadius(12)
         }
     }
+
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Notes")
+                    .font(.headline)
+
+                Spacer()
+
+                Button(action: {
+                    _ = MeetingNotesStore.shared.save(notes: notesText, for: meeting)
+                }) {
+                    Label("Save", systemImage: "checkmark")
+                }
+                .buttonStyle(.bordered)
+
+                Button(action: shareMeeting) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+                .buttonStyle(.bordered)
+            }
+
+            TextEditor(text: Binding(
+                get: { notesText },
+                set: { newValue in
+                    notesText = newValue
+                    _ = MeetingNotesStore.shared.save(notes: newValue, for: meeting)
+                }
+            ))
+            .font(.system(size: 13, design: .monospaced))
+            .frame(minHeight: 260)
+            .scrollContentBackground(.hidden)
+            .padding(12)
+            .background(Color.primary.opacity(0.03))
+            .cornerRadius(12)
+        }
+    }
     
     // MARK: - Actions
     
@@ -296,6 +348,10 @@ struct MeetingDetailView: View {
             
             isExporting = false
         }
+    }
+
+    private func shareMeeting() {
+        MeetingNotesStore.shared.share(meeting: meeting, notes: notesText)
     }
     
     private func openInFinder() {
@@ -383,4 +439,3 @@ struct EmptyStateView: View {
     MeetingHistoryView()
         .environmentObject(AppState.shared)
 }
-

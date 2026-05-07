@@ -8,6 +8,8 @@ export interface RecordedMeeting {
   audioFilePath: string;
   transcriptFilePath?: string;
   transcript?: string;
+  notesFilePath?: string;
+  notesMarkdown?: string;
 }
 
 export interface ParsedMeeting extends RecordedMeeting {

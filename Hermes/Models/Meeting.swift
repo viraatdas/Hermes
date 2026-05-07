@@ -54,6 +54,8 @@ struct RecordedMeeting: Identifiable, Codable, Hashable {
     let audioFilePath: String
     var transcriptFilePath: String?
     var transcript: String?
+    var notesFilePath: String?
+    var notesMarkdown: String?
     
     var formattedDate: String {
         let formatter = DateFormatter()
@@ -71,5 +73,17 @@ struct RecordedMeeting: Identifiable, Codable, Hashable {
     var audioURL: URL? {
         URL(fileURLWithPath: audioFilePath)
     }
-}
 
+    var notesURL: URL? {
+        guard let notesFilePath else { return nil }
+        return URL(fileURLWithPath: notesFilePath)
+    }
+
+    static func == (lhs: RecordedMeeting, rhs: RecordedMeeting) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

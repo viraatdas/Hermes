@@ -47,6 +47,9 @@ class MeetingManager: ObservableObject {
                 audioURL: audioURL,
                 startTime: Date()
             )
+
+            MeetingNotesStore.shared.startSession(meeting: meeting, audioURL: audioURL)
+            MeetingNotesWindowPresenter.open()
             
             AppState.shared.isRecording = true
             AppState.shared.currentMeeting = meeting
@@ -86,11 +89,15 @@ class MeetingManager: ObservableObject {
                 duration: duration,
                 audioFilePath: audioURL.path,
                 transcriptFilePath: nil,
-                transcript: nil
+                transcript: nil,
+                notesFilePath: nil,
+                notesMarkdown: nil
             )
+
+            let recordedMeetingWithNotes = MeetingNotesStore.shared.finishSession(recordedMeeting: recordedMeeting)
             
             // Save the recording metadata
-            AppState.shared.addRecordedMeeting(recordedMeeting)
+            AppState.shared.addRecordedMeeting(recordedMeetingWithNotes)
             
             currentRecording = nil
             
@@ -98,7 +105,7 @@ class MeetingManager: ObservableObject {
             
             // Start transcription in background
             Task {
-                await transcribeRecording(recordedMeeting: recordedMeeting, audioURL: audioURL)
+                await transcribeRecording(recordedMeeting: recordedMeetingWithNotes, audioURL: audioURL)
             }
             
         } catch {
@@ -146,6 +153,7 @@ class MeetingManager: ObservableObject {
             var updatedMeeting = recordedMeeting
             updatedMeeting.transcriptFilePath = transcriptURL.path
             updatedMeeting.transcript = rawTranscript
+            MeetingNotesStore.shared.updateFinalTranscript(rawTranscript, for: recordedMeeting.id)
 
             // Update in app state
             if let index = AppState.shared.recordedMeetings.firstIndex(where: { $0.id == recordedMeeting.id }) {
@@ -199,8 +207,6 @@ enum ExportError: Error, LocalizedError {
         }
     }
 }
-
-
 
 
 

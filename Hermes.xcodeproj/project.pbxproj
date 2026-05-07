@@ -23,6 +23,10 @@
 		AAA0000014 /* HermesIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000017 /* HermesIconView.swift */; };
 		AAA0000015 /* LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000018 /* LaunchAtLoginService.swift */; };
 		AAA0000016 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000019 /* CalendarView.swift */; };
+		AAA0000017 /* AnthropicService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000020 /* AnthropicService.swift */; };
+		AAA0000018 /* LiveTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000021 /* LiveTranscriptionService.swift */; };
+		AAA0000019 /* MeetingNotesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000022 /* MeetingNotesStore.swift */; };
+		AAA0000020 /* MeetingNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB0000023 /* MeetingNotesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +49,10 @@
 		BBB0000017 /* HermesIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HermesIconView.swift; sourceTree = "<group>"; };
 		BBB0000018 /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		BBB0000019 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		BBB0000020 /* AnthropicService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnthropicService.swift; sourceTree = "<group>"; };
+		BBB0000021 /* LiveTranscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTranscriptionService.swift; sourceTree = "<group>"; };
+		BBB0000022 /* MeetingNotesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingNotesStore.swift; sourceTree = "<group>"; };
+		BBB0000023 /* MeetingNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingNotesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +107,9 @@
 				BBB0000008 /* ScreenShareDetector.swift */,
 				BBB0000009 /* MeetingManager.swift */,
 				BBB0000018 /* LaunchAtLoginService.swift */,
+				BBB0000020 /* AnthropicService.swift */,
+				BBB0000021 /* LiveTranscriptionService.swift */,
+				BBB0000022 /* MeetingNotesStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -111,6 +122,7 @@
 				BBB0000012 /* MeetingHistoryView.swift */,
 				BBB0000017 /* HermesIconView.swift */,
 				BBB0000019 /* CalendarView.swift */,
+				BBB0000023 /* MeetingNotesView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -207,6 +219,10 @@
 				AAA0000014 /* HermesIconView.swift in Sources */,
 				AAA0000015 /* LaunchAtLoginService.swift in Sources */,
 				AAA0000016 /* CalendarView.swift in Sources */,
+				AAA0000017 /* AnthropicService.swift in Sources */,
+				AAA0000018 /* LiveTranscriptionService.swift in Sources */,
+				AAA0000019 /* MeetingNotesStore.swift in Sources */,
+				AAA0000020 /* MeetingNotesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

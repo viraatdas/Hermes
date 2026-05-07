@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var appState = AppState.shared
     @ObservedObject var calendarService = GoogleCalendarService.shared
+    @ObservedObject var anthropicService = AnthropicService.shared
     
     @AppStorage("notificationMinutesBefore") private var notificationMinutesBefore = 5
     @AppStorage("autoRecordMeetings") private var autoRecordMeetings = true
@@ -14,6 +15,9 @@ struct SettingsView: View {
     @AppStorage("googleOAuthClientSecret") private var googleOAuthClientSecret = ""
     
     @State private var launchAtLogin = false
+    @State private var anthropicAPIKey = ""
+    @State private var anthropicStatus: String?
+    @State private var isTestingAnthropic = false
     
     var body: some View {
         TabView {
@@ -31,13 +35,18 @@ struct SettingsView: View {
                 .tabItem {
                     Label("Recording", systemImage: "waveform")
                 }
+
+            aiTab
+                .tabItem {
+                    Label("AI", systemImage: "sparkles")
+                }
             
             aboutTab
                 .tabItem {
                     Label("About", systemImage: "info.circle")
                 }
         }
-        .frame(width: 450, height: 320)
+        .frame(width: 470, height: 380)
         .onAppear {
             launchAtLogin = LaunchAtLoginService.shared.isEnabled
         }
@@ -180,6 +189,76 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .padding()
     }
+
+    // MARK: - AI Tab
+
+    private var aiTab: some View {
+        Form {
+            Section {
+                HStack {
+                    Image(systemName: anthropicService.hasAPIKey ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundColor(anthropicService.hasAPIKey ? .green : .secondary)
+                    Text(anthropicService.hasAPIKey ? "Anthropic key saved" : "No Anthropic key saved")
+                    Spacer()
+                }
+
+                SecureField("Anthropic API Key", text: $anthropicAPIKey)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 12, design: .monospaced))
+
+                HStack {
+                    Button("Save Key") {
+                        anthropicService.saveAPIKey(anthropicAPIKey)
+                        anthropicAPIKey = ""
+                        anthropicStatus = "Saved"
+                    }
+                    .disabled(anthropicAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+                    Button(isTestingAnthropic ? "Testing..." : "Test") {
+                        isTestingAnthropic = true
+                        Task {
+                            do {
+                                let result = try await anthropicService.testConnection()
+                                anthropicStatus = result
+                            } catch {
+                                anthropicStatus = error.localizedDescription
+                            }
+                            isTestingAnthropic = false
+                        }
+                    }
+                    .disabled(!anthropicService.hasAPIKey || isTestingAnthropic)
+
+                    Spacer()
+
+                    Button("Clear") {
+                        anthropicService.clearAPIKey()
+                        anthropicAPIKey = ""
+                        anthropicStatus = "Cleared"
+                    }
+                    .foregroundColor(.red)
+                    .disabled(!anthropicService.hasAPIKey)
+                }
+
+                if let anthropicStatus {
+                    Text(anthropicStatus)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            } header: {
+                Text("Anthropic")
+            }
+
+            Section {
+                Text("Used for live meeting Q&A and generating editable meeting notes. Audio and transcripts remain local unless you ask an AI question or generate notes.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } header: {
+                Text("Privacy")
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+    }
     
     // MARK: - About Tab
     
@@ -194,7 +273,7 @@ struct SettingsView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            Text("Version 0.2.0")
+            Text("Version 0.2.5")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
