@@ -12,7 +12,11 @@ A native macOS menu bar app that records your meetings with one-click join, auto
 - **One-click join & record** - Click to join meetings and automatically start recording
 - **Records both sides** - Captures system audio (meeting participants) AND your microphone
 - **Automatic transcription** - Uses Apple's on-device Speech framework
+- **Invisible copilot overlay** - A floating panel hidden from screen sharing (`⌃⌥⌘Space`). Capture follow-ups and ask the transcript privately mid-call — nobody else sees it
+- **Anchors → Notes** - Jot short anchors while staying present; Hermes merges them with the transcript into a clean summary, decisions, and action items you can chat with
+- **Bring your own AI** - Anthropic API key, Claude Code OAuth token, or Codex / OpenAI key. Import an existing CLI login from `~/.claude/.credentials.json` or `~/.codex/auth.json`. Stored in the macOS Keychain
 - **Google Calendar integration** - See upcoming meetings with video links
+- **MCP server** - Claude Desktop, Cursor, and Claude Code can search, read, and enrich your notes as tools
 - **Smart notifications** - Get reminders only for meetings with video calls
 - **Export as M4A** - High-quality audio exports
 

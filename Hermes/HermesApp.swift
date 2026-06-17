@@ -24,7 +24,7 @@ struct HermesApp: App {
         Window("Calendar", id: "calendar") {
             CalendarView()
         }
-        .defaultSize(width: 800, height: 550)
+        .defaultSize(width: 600, height: 640)
     }
 }
 
@@ -47,15 +47,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     }
     
     @objc func openCalendarWindow() {
-        NSApp.activate(ignoringOtherApps: true)
+        Task { @MainActor in
+            AppWindowPresenter.openCalendar()
+        }
     }
     
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
             if url.scheme == "hermes" {
                 if url.host == "calendar" {
-                    // Open calendar window via keyboard shortcut workaround
-                    NSApp.activate(ignoringOtherApps: true)
+                    Task { @MainActor in
+                        AppWindowPresenter.openCalendar()
+                    }
                 }
             }
         }
@@ -67,16 +70,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         
         // Request notification permissions
         Task {
-            do {
-                let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert])
-                if granted {
-                    print("✅ Notification permission granted")
-                } else {
-                    print("❌ Notification permission denied - please enable in System Settings")
-                }
-            } catch {
-                print("❌ Failed to request notification permission: \(error)")
-            }
+            _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert])
         }
         
         // Register notification categories with actions
@@ -122,14 +116,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
             _ = AnthropicService.shared.importLocalCredentials()
             OnboardingWindowPresenter.openIfNeeded()
         }
+
+        GlobalHotkeyService.shared.register()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        GlobalHotkeyService.shared.unregister()
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
-        
-        print("📬 Notification tapped: \(response.actionIdentifier)")
-        print("📬 UserInfo: \(userInfo)")
-        
         let meetingTitle = userInfo["meetingTitle"] as? String ?? "Meeting"
         let meetingURL = userInfo["meetingURL"] as? String
         let meetingId = userInfo["meetingId"] as? String ?? UUID().uuidString
@@ -163,9 +159,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
             }
             
         case "DISMISS":
-            // User explicitly dismissed
-            print("📬 User dismissed notification for: \(meetingTitle)")
-            
+            break
+
         default:
             break
         }

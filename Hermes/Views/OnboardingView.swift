@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct OnboardingView: View {
     @ObservedObject private var calendarService = GoogleCalendarService.shared
@@ -80,15 +81,44 @@ struct OnboardingView: View {
     private var anthropicStep: some View {
         setupRow(
             icon: "sparkles",
-            title: "Anthropic",
+            title: "AI Provider",
             status: anthropicService.credentialSourceDescription,
             isComplete: anthropicService.hasAPIKey
         ) {
             VStack(alignment: .trailing, spacing: 8) {
+                Picker("", selection: $anthropicService.activeProvider) {
+                    ForEach(AIProvider.allCases) { provider in
+                        Text(provider.displayName).tag(provider)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: 230)
+
+                if !anthropicService.hasAPIKey {
+                    HStack {
+                        SecureField(anthropicService.activeProvider.placeholder, text: $anthropicAPIKey)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 230)
+
+                        Button("Save") {
+                            anthropicService.saveCredential(anthropicAPIKey, for: anthropicService.activeProvider)
+                            anthropicAPIKey = ""
+                            statusMessage = "\(anthropicService.activeProvider.displayName) saved"
+                            OnboardingWindowPresenter.closeIfComplete()
+                        }
+                        .disabled(anthropicAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }
+                }
+
                 HStack {
-                    Button("Use Local Key") {
+                    Button("Import File…") {
+                        importCredentialFile()
+                    }
+                    .disabled(anthropicService.hasAPIKey)
+
+                    Button("Use Env Vars") {
                         if anthropicService.importLocalCredentials() {
-                            statusMessage = "Anthropic key imported"
+                            statusMessage = "Credential imported"
                             OnboardingWindowPresenter.closeIfComplete()
                         } else {
                             statusMessage = anthropicService.lastError
@@ -101,22 +131,25 @@ struct OnboardingView: View {
                     }
                     .disabled(!anthropicService.hasAPIKey || isTestingAnthropic)
                 }
+            }
+        }
+    }
 
-                if !anthropicService.hasAPIKey {
-                    HStack {
-                        SecureField("Paste Anthropic API key", text: $anthropicAPIKey)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 230)
+    private func importCredentialFile() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        panel.allowedContentTypes = [.json]
+        panel.message = "Select ~/.claude/.credentials.json or ~/.codex/auth.json"
+        panel.directoryURL = FileManager.default.homeDirectoryForCurrentUser
 
-                        Button("Save") {
-                            anthropicService.saveAPIKey(anthropicAPIKey)
-                            anthropicAPIKey = ""
-                            statusMessage = "Anthropic key saved"
-                            OnboardingWindowPresenter.closeIfComplete()
-                        }
-                        .disabled(anthropicAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    }
-                }
+        if panel.runModal() == .OK, let url = panel.url {
+            if anthropicService.importCredentialFile(at: url) {
+                statusMessage = "\(anthropicService.activeProvider.displayName) imported"
+                OnboardingWindowPresenter.closeIfComplete()
+            } else {
+                statusMessage = anthropicService.lastError
             }
         }
     }

@@ -8,13 +8,7 @@ class AppState: ObservableObject {
     
     @Published var isRecording = false
     @Published var currentMeeting: Meeting?
-    @Published var upcomingMeetings: [Meeting] = [] {
-        didSet {
-            print("📊 AppState.upcomingMeetings updated: \(upcomingMeetings.count) meetings")
-            // Force UI update
-            objectWillChange.send()
-        }
-    }
+    @Published var upcomingMeetings: [Meeting] = []
     @Published var recordedMeetings: [RecordedMeeting] = []
     @Published var isAuthenticated = false
     @Published var isScreenSharing = false

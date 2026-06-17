@@ -5,7 +5,6 @@ struct MenuBarView: View {
     @ObservedObject private var appState = AppState.shared
     @ObservedObject var calendarService = GoogleCalendarService.shared
     @ObservedObject var recorder = AudioRecorder.shared
-    @Environment(\.openWindow) private var openWindow
     
     @State private var isRefreshing = false
     
@@ -131,14 +130,13 @@ struct MenuBarView: View {
             VStack(spacing: 2) {
                 // Open Calendar window
                 Button(action: {
-                    NSApp.activate(ignoringOtherApps: true)
-                    openWindow(id: "calendar")
+                    AppWindowPresenter.openCalendar()
                 }) {
                     HStack {
                         Image(systemName: "calendar")
                         Text("Open Calendar")
                         Spacer()
-                        Text("⌘C")
+                        Text("⌃⌥⌘C")
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)
                     }
@@ -146,6 +144,22 @@ struct MenuBarView: View {
                 }
                 .buttonStyle(.plain)
                 
+                Button(action: {
+                    StealthOverlayController.shared.toggle()
+                }) {
+                    HStack {
+                        Image(systemName: "eye.slash")
+                        Text("Private Overlay")
+                        Spacer()
+                        Text("⌃⌥⌘Space")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 6)
+                }
+                .buttonStyle(.plain)
+                .help("A copilot panel hidden from screen sharing")
+
                 Button(action: {
                     let fileManager = FileManager.default
                     let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -179,6 +193,9 @@ struct MenuBarView: View {
                         Image(systemName: "person.crop.circle.badge.checkmark")
                         Text("Set Up Account")
                         Spacer()
+                        Text("⌃⌥⌘H")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
                     }
                     .padding(.vertical, 6)
                 }
@@ -209,25 +226,16 @@ struct MenuBarView: View {
     }
     
     private func refreshCalendar() {
-        print("🔄 Refresh button clicked")
         isRefreshing = true
-        
+
         Task { @MainActor in
             do {
-                print("🔄 Fetching meetings...")
                 let fetched = try await calendarService.fetchUpcomingMeetings()
-                print("🔄 Got \(fetched.count) meetings")
-                
-                // Update AppState (this triggers UI refresh)
                 AppState.shared.upcomingMeetings = fetched
-                
-                // Schedule notifications
                 await NotificationService.shared.scheduleNotifications(for: fetched)
-                
             } catch {
-                print("❌ Failed to refresh: \(error)")
+                print("Failed to refresh calendar: \(error)")
             }
-            
             isRefreshing = false
         }
     }
@@ -253,7 +261,7 @@ struct MenuBarView: View {
                     Image(systemName: "note.text")
                 }
                 .buttonStyle(.bordered)
-                .help("Open Notes")
+                .help("Open Notes (⌃⌥⌘N)")
 
                 Button(action: {
                     Task {
@@ -264,7 +272,7 @@ struct MenuBarView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.red)
-                .help("Stop Recording")
+                .help("Stop Recording (⌃⌥⌘R)")
             }
         }
         .padding(.top, 12)

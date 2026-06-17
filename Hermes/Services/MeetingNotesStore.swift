@@ -187,8 +187,46 @@ class MeetingNotesStore: ObservableObject {
         }
     }
 
-    private var transcriptForAI: String {
+    var transcriptForAI: String {
         finalTranscript.isEmpty ? LiveTranscriptionService.shared.currentTranscript : finalTranscript
+    }
+
+    /// Context the stealth overlay feeds to the AI: current notes + live transcript.
+    var overlayContext: String {
+        var parts: [String] = []
+        if let activeTitle { parts.append("Meeting: \(activeTitle)") }
+        if !notesMarkdown.isEmpty { parts.append("Notes:\n\(notesMarkdown)") }
+        let transcript = transcriptForAI
+        if !transcript.isEmpty { parts.append("Transcript:\n\(transcript)") }
+        return parts.joined(separator: "\n\n")
+    }
+
+    /// Append a timestamped follow-up/anchor captured from the overlay into the
+    /// active notes under a "Follow-ups" section. Returns false if there is no
+    /// active session (caller should fall back to the scratchpad).
+    @discardableResult
+    func appendFollowUp(_ text: String) -> Bool {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, hasActiveSession else { return false }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        let stamp = formatter.string(from: Date())
+        let bullet = "- [ ] \(trimmed)  _(\(stamp))_"
+
+        var markdown = notesMarkdown
+        if let range = markdown.range(of: "## Follow-ups") {
+            // Insert right after the header line.
+            if let lineEnd = markdown.range(of: "\n", range: range.upperBound..<markdown.endIndex) {
+                markdown.insert(contentsOf: "\n\(bullet)", at: lineEnd.lowerBound)
+            } else {
+                markdown.append("\n\(bullet)")
+            }
+        } else {
+            markdown += "\n\n## Follow-ups\n\(bullet)\n"
+        }
+        updateNotes(markdown)
+        return true
     }
 
     private func notesURL(for audioURL: URL) -> URL {

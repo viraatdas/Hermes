@@ -1,4 +1,6 @@
 import SwiftUI
+import AppKit
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @ObservedObject var appState = AppState.shared
@@ -15,7 +17,7 @@ struct SettingsView: View {
     @AppStorage("googleOAuthClientSecret") private var googleOAuthClientSecret = ""
     
     @State private var launchAtLogin = false
-    @State private var anthropicAPIKey = ""
+    @State private var credentialInput = ""
     @State private var anthropicStatus: String?
     @State private var isTestingAnthropic = false
     
@@ -71,6 +73,16 @@ struct SettingsView: View {
                     Text("10 minutes").tag(10)
                     Text("15 minutes").tag(15)
                 }
+            }
+
+            Section {
+                LabeledContent("Set Up Account", value: "⌃⌥⌘H")
+                LabeledContent("Open Calendar", value: "⌃⌥⌘C")
+                LabeledContent("Open Notes", value: "⌃⌥⌘N")
+                LabeledContent("Start or Stop Recording", value: "⌃⌥⌘R")
+                LabeledContent("Toggle Private Overlay", value: "⌃⌥⌘Space")
+            } header: {
+                Text("Hotkeys")
             }
         }
         .formStyle(.grouped)
@@ -195,31 +207,38 @@ struct SettingsView: View {
     private var aiTab: some View {
         Form {
             Section {
+                Picker("Provider", selection: $anthropicService.activeProvider) {
+                    ForEach(AIProvider.allCases) { provider in
+                        Text(provider.displayName).tag(provider)
+                    }
+                }
+
                 HStack {
                     Image(systemName: anthropicService.hasAPIKey ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .foregroundColor(anthropicService.hasAPIKey ? .green : .secondary)
-                    Text(anthropicService.hasAPIKey ? "Anthropic key saved" : "No Anthropic key saved")
+                    Text(anthropicService.hasAPIKey
+                         ? "\(anthropicService.activeProvider.displayName) configured"
+                         : "No credential for \(anthropicService.activeProvider.displayName)")
                     Spacer()
                 }
 
-                SecureField("Anthropic API Key", text: $anthropicAPIKey)
+                SecureField(anthropicService.activeProvider.placeholder, text: $credentialInput)
                     .textFieldStyle(.roundedBorder)
                     .font(.system(size: 12, design: .monospaced))
 
                 HStack {
-                    Button("Save Key") {
-                        anthropicService.saveAPIKey(anthropicAPIKey)
-                        anthropicAPIKey = ""
-                        anthropicStatus = "Saved"
+                    Button("Save") {
+                        anthropicService.saveCredential(credentialInput, for: anthropicService.activeProvider)
+                        credentialInput = ""
+                        anthropicStatus = "Saved \(anthropicService.activeProvider.displayName)"
                     }
-                    .disabled(anthropicAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(credentialInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
                     Button(isTestingAnthropic ? "Testing..." : "Test") {
                         isTestingAnthropic = true
                         Task {
                             do {
-                                let result = try await anthropicService.testConnection()
-                                anthropicStatus = result
+                                anthropicStatus = try await anthropicService.testConnection()
                             } catch {
                                 anthropicStatus = error.localizedDescription
                             }
@@ -231,8 +250,8 @@ struct SettingsView: View {
                     Spacer()
 
                     Button("Clear") {
-                        anthropicService.clearAPIKey()
-                        anthropicAPIKey = ""
+                        anthropicService.clearCredential(for: anthropicService.activeProvider)
+                        credentialInput = ""
                         anthropicStatus = "Cleared"
                     }
                     .foregroundColor(.red)
@@ -244,21 +263,34 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
+            } header: {
+                Text("AI Credential")
+            } footer: {
+                Text("Claude Code uses your subscription OAuth token (Bearer auth). Codex/OpenAI uses an API key. Anthropic uses a standard API key.")
+                    .font(.caption)
+            }
 
-                Button("Use Local Laptop Credentials") {
+            Section {
+                Button("Import from Claude Code / Codex file…") {
+                    importCredentialFile()
+                }
+
+                Button("Use Environment Variables") {
                     if anthropicService.importLocalCredentials() {
-                        anthropicStatus = "Imported local Anthropic key"
+                        anthropicStatus = "Imported \(anthropicService.activeProvider.displayName)"
                     } else {
                         anthropicStatus = anthropicService.lastError
                     }
                 }
-                .disabled(anthropicService.hasAPIKey)
             } header: {
-                Text("Anthropic")
+                Text("Import")
+            } footer: {
+                Text("Pick ~/.claude/.credentials.json or ~/.codex/auth.json to import an existing CLI login. (In the open panel press ⌘⇧G to type the hidden path.)")
+                    .font(.caption)
             }
 
             Section {
-                Text("Used for live meeting Q&A and generating editable meeting notes. Audio and transcripts remain local unless you ask an AI question or generate notes.")
+                Text("Used for live meeting Q&A, the private overlay copilot, and generating editable notes. Audio and transcripts stay local unless you ask a question or generate notes.")
                     .font(.caption)
                     .foregroundColor(.secondary)
             } header: {
@@ -267,6 +299,24 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .padding()
+    }
+
+    private func importCredentialFile() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowsMultipleSelection = false
+        panel.allowedContentTypes = [.json]
+        panel.message = "Select ~/.claude/.credentials.json or ~/.codex/auth.json"
+        panel.directoryURL = FileManager.default.homeDirectoryForCurrentUser
+
+        if panel.runModal() == .OK, let url = panel.url {
+            if anthropicService.importCredentialFile(at: url) {
+                anthropicStatus = "Imported \(anthropicService.activeProvider.displayName)"
+            } else {
+                anthropicStatus = anthropicService.lastError
+            }
+        }
     }
     
     // MARK: - About Tab
@@ -282,7 +332,7 @@ struct SettingsView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            Text("Version 0.2.6")
+            Text("Version 0.2.7")
                 .font(.caption)
                 .foregroundColor(.secondary)
 

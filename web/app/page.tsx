@@ -113,6 +113,65 @@ function LockIcon() {
   );
 }
 
+function EyeOffIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+      <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+      <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+      <line x1="2" x2="22" y1="2" y2="22" />
+    </svg>
+  );
+}
+
+function BoltIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+    </svg>
+  );
+}
+
+function KeyIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="7.5" cy="15.5" r="5.5" />
+      <path d="m21 2-9.6 9.6" />
+      <path d="m15.5 7.5 3 3L22 7l-3-3" />
+    </svg>
+  );
+}
+
 export default function Home() {
   return (
     <div className={styles.container}>
@@ -131,19 +190,21 @@ export default function Home() {
             <h1 className={styles.title}>Hermes</h1>
 
             <p className={styles.tagline}>
-              The meeting recorder built for agents.
+              Your invisible meeting copilot.
             </p>
 
             <p className={styles.subtitle}>
-              Record and transcribe meetings to local markdown files. A built-in
-              MCP server gives Claude, Cursor, and any AI tool direct access to
-              search, read, and act on your notes.
+              Record and transcribe meetings to local markdown — no bots, no
+              awkward AI participants. Jot anchors and ask questions from an
+              overlay that&apos;s hidden from screen sharing, powered by your own
+              Claude Code, Codex, or Anthropic key. A built-in MCP server lets
+              any agent read and act on your notes.
             </p>
           </div>
 
           <a
             className={styles.downloadButton}
-            href="https://github.com/viraatdas/Hermes/releases/download/v0.2.6/Hermes-v0.2.6.dmg"
+            href="https://github.com/viraatdas/Hermes/releases/download/v0.2.7/Hermes-v0.2.7.dmg"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -183,6 +244,42 @@ export default function Home() {
               <p className={styles.featureDesc}>
                 Everything on-device. On-device transcription via Apple Speech.
                 Agents connect locally via stdio. No cloud required.
+              </p>
+            </div>
+
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <EyeOffIcon />
+              </div>
+              <h3 className={styles.featureTitle}>Invisible Overlay</h3>
+              <p className={styles.featureDesc}>
+                A floating copilot hidden from screen sharing. Capture
+                follow-ups and ask the transcript privately mid-call — no one
+                else sees it. Toggle with ⌃⌥⌘Space.
+              </p>
+            </div>
+
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <KeyIcon />
+              </div>
+              <h3 className={styles.featureTitle}>Bring Your Own AI</h3>
+              <p className={styles.featureDesc}>
+                Paste an Anthropic key, your Claude Code OAuth token, or a
+                Codex / OpenAI key — or import an existing CLI login. Stored in
+                the macOS Keychain.
+              </p>
+            </div>
+
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>
+                <BoltIcon />
+              </div>
+              <h3 className={styles.featureTitle}>Anchors → Notes</h3>
+              <p className={styles.featureDesc}>
+                Jot short anchors while you stay present. Hermes merges them
+                with the transcript into a clean summary, decisions, and action
+                items you can chat with afterward.
               </p>
             </div>
           </div>
