@@ -113,11 +113,11 @@ function LockIcon() {
   );
 }
 
-function EyeOffIcon() {
+function EyeOffIcon({ size = 20 }: { size?: number }) {
   return (
     <svg
-      width="20"
-      height="20"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -172,6 +172,31 @@ function KeyIcon() {
   );
 }
 
+function ScreenMock({ sharing = false }: { sharing?: boolean }) {
+  return (
+    <div className={styles.mockWindow}>
+      <div className={styles.mockBar}>
+        <span className={styles.mockDot} />
+        <span className={styles.mockDot} />
+        <span className={styles.mockDot} />
+        <span className={styles.mockBarText}>
+          {sharing ? "Screen share · live" : "Zoom"}
+        </span>
+        {sharing && <span className={styles.mockShareDot} />}
+      </div>
+      <div className={styles.mockBody}>
+        <div className={styles.mockSlideTitle} />
+        <div className={styles.mockLine} />
+        <div className={styles.mockLineShort} />
+        <div className={styles.mockTiles}>
+          <div className={styles.mockTile} />
+          <div className={styles.mockTile} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div className={styles.container}>
@@ -211,6 +236,66 @@ export default function Home() {
             <AppleIcon />
             <span>Download for macOS</span>
           </a>
+
+          <section className={styles.spotlight}>
+            <div className={styles.spotlightHead}>
+              <span className={styles.spotlightTag}>
+                <EyeOffIcon size={14} />
+                Invisible overlay
+              </span>
+              <h2 className={styles.spotlightTitle}>
+                You see your notes. They don&apos;t.
+              </h2>
+              <p className={styles.spotlightDesc}>
+                Press <kbd className={styles.kbd}>⌃⌥⌘Space</kbd> and a copilot
+                panel floats over your call. macOS excludes it from screen
+                capture, so it never appears in a Zoom, Meet, or Teams share.
+                Jot a &ldquo;follow up with&hellip;&rdquo; or ask the live
+                transcript a question — privately, mid-meeting.
+              </p>
+            </div>
+
+            <div className={styles.compare}>
+              <figure className={styles.comparePane}>
+                <div className={styles.screen}>
+                  <ScreenMock />
+                  <div className={styles.overlayMock}>
+                    <div className={styles.overlayHeader}>
+                      <span className={styles.overlayEye}>
+                        <EyeOffIcon size={12} />
+                      </span>
+                      <div>
+                        <div className={styles.overlayName}>Hermes Copilot</div>
+                        <div className={styles.overlaySub}>
+                          Hidden from screen share
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.overlayField}>
+                      ⚡ Follow up with Dana on pricing
+                    </div>
+                    <div className={styles.overlayField}>
+                      ✦ What did they commit to on timeline?
+                    </div>
+                  </div>
+                </div>
+                <figcaption className={styles.compareLabel}>
+                  <span className={styles.dotYou} />
+                  Your screen
+                </figcaption>
+              </figure>
+
+              <figure className={styles.comparePane}>
+                <div className={styles.screen}>
+                  <ScreenMock sharing />
+                </div>
+                <figcaption className={styles.compareLabel}>
+                  <span className={styles.dotThem} />
+                  What participants see
+                </figcaption>
+              </figure>
+            </div>
+          </section>
 
           <div className={styles.features}>
             <div className={styles.featureCard}>

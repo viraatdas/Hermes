@@ -162,6 +162,248 @@
   margin: 0;
 }
 
+/* Invisible overlay spotlight */
+.spotlight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 720px;
+}
+
+.spotlightHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.spotlightTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  padding: 5px 12px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: var(--gold-glow);
+}
+
+.spotlightTitle {
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.spotlightDesc {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 520px;
+  margin: 0;
+}
+
+.kbd {
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--foreground);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+.comparePane {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.screen {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  aspect-ratio: 4 / 3;
+}
+
+.compareLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dotYou,
+.dotThem {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+}
+
+.dotYou {
+  background: var(--gold);
+}
+
+.dotThem {
+  background: #9ca3af;
+}
+
+/* Fake meeting window inside .screen */
+.mockWindow {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mockBar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(127, 127, 127, 0.06);
+}
+
+.mockDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--muted-foreground);
+  opacity: 0.5;
+}
+
+.mockBarText {
+  margin-left: 6px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.mockShareDot {
+  margin-left: auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #ef4444;
+}
+
+.mockBody {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mockSlideTitle {
+  width: 55%;
+  height: 12px;
+  border-radius: 5px;
+  background: var(--muted-foreground);
+  opacity: 0.35;
+}
+
+.mockLine {
+  width: 90%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--muted-foreground);
+  opacity: 0.18;
+}
+
+.mockLineShort {
+  width: 70%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--muted-foreground);
+  opacity: 0.18;
+}
+
+.mockTiles {
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.mockTile {
+  flex: 1;
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  background: var(--muted-foreground);
+  opacity: 0.12;
+}
+
+/* The copilot panel floating over the share */
+.overlayMock {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 64%;
+  max-width: 210px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--gold);
+  background: var(--background);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  z-index: 2;
+}
+
+.overlayHeader {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.overlayEye {
+  display: inline-flex;
+  color: var(--gold);
+}
+
+.overlayName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.overlaySub {
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.overlayField {
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--foreground);
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+
 /* Code block group */
 .codeBlockGroup {
   display: flex;
@@ -296,6 +538,12 @@
   .features {
     grid-template-columns: 1fr;
     max-width: 360px;
+  }
+
+  .compare {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin: 0 auto;
   }
 
   .codeBlockGroup {
