@@ -1,6 +1,5 @@
 import AppKit
 import SwiftUI
-import UniformTypeIdentifiers
 
 struct OnboardingView: View {
     @ObservedObject private var calendarService = GoogleCalendarService.shared
@@ -155,53 +154,14 @@ struct OnboardingView: View {
                     }
                 }
 
-                HStack(spacing: 8) {
-                    Button {
-                        importCredentialFile()
-                    } label: {
-                        Label("Import File", systemImage: "doc.badge.plus")
-                    }
-                    .disabled(anthropicService.hasAPIKey)
-
-                    Button {
-                        if anthropicService.importLocalCredentials() {
-                            statusMessage = "Credential imported"
-                            OnboardingWindowPresenter.closeIfComplete()
-                        } else {
-                            statusMessage = anthropicService.lastError
-                        }
-                    } label: {
-                        Label("Env Vars", systemImage: "terminal")
-                    }
-                    .disabled(anthropicService.hasAPIKey)
-
+                HStack {
                     Spacer()
-
-                    Button(isTestingAnthropic ? "Testing…" : "Test") {
+                    Button(isTestingAnthropic ? "Testing…" : "Test connection") {
                         testAnthropic()
                     }
+                    .controlSize(.small)
                     .disabled(!anthropicService.hasAPIKey || isTestingAnthropic)
                 }
-                .controlSize(.small)
-            }
-        }
-    }
-
-    private func importCredentialFile() {
-        let panel = NSOpenPanel()
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = false
-        panel.allowsMultipleSelection = false
-        panel.allowedContentTypes = [.json]
-        panel.message = "Select ~/.claude/.credentials.json or ~/.codex/auth.json"
-        panel.directoryURL = FileManager.default.homeDirectoryForCurrentUser
-
-        if panel.runModal() == .OK, let url = panel.url {
-            if anthropicService.importCredentialFile(at: url) {
-                statusMessage = "\(anthropicService.activeProvider.displayName) imported"
-                OnboardingWindowPresenter.closeIfComplete()
-            } else {
-                statusMessage = anthropicService.lastError
             }
         }
     }

@@ -1,6 +1,5 @@
 import SwiftUI
 import AppKit
-import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @ObservedObject var appState = AppState.shared
@@ -272,25 +271,6 @@ struct SettingsView: View {
             }
 
             Section {
-                Button("Import from Claude Code / Codex file…") {
-                    importCredentialFile()
-                }
-
-                Button("Use Environment Variables") {
-                    if anthropicService.importLocalCredentials() {
-                        anthropicStatus = "Imported \(anthropicService.activeProvider.displayName)"
-                    } else {
-                        anthropicStatus = anthropicService.lastError
-                    }
-                }
-            } header: {
-                Text("Import")
-            } footer: {
-                Text("Pick ~/.claude/.credentials.json or ~/.codex/auth.json to import an existing CLI login. (In the open panel press ⌘⇧G to type the hidden path.)")
-                    .font(.caption)
-            }
-
-            Section {
                 Text("Used for live meeting Q&A, the private overlay copilot, and generating editable notes. Audio and transcripts stay local unless you ask a question or generate notes.")
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -302,23 +282,6 @@ struct SettingsView: View {
         .padding()
     }
 
-    private func importCredentialFile() {
-        let panel = NSOpenPanel()
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = false
-        panel.allowsMultipleSelection = false
-        panel.allowedContentTypes = [.json]
-        panel.message = "Select ~/.claude/.credentials.json or ~/.codex/auth.json"
-        panel.directoryURL = FileManager.default.homeDirectoryForCurrentUser
-
-        if panel.runModal() == .OK, let url = panel.url {
-            if anthropicService.importCredentialFile(at: url) {
-                anthropicStatus = "Imported \(anthropicService.activeProvider.displayName)"
-            } else {
-                anthropicStatus = anthropicService.lastError
-            }
-        }
-    }
     
     // MARK: - About Tab
     
