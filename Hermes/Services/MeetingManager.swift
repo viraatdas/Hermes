@@ -54,10 +54,7 @@ class MeetingManager: ObservableObject {
             AppState.shared.isRecording = true
             AppState.shared.currentMeeting = meeting
             AppState.shared.startRecordingTimer()
-            
-            // Start screen share detection
-            ScreenShareDetector.shared.startMonitoring()
-            
+
             print("Started recording: \(meeting.title)")
         } catch {
             print("Failed to start recording: \(error)")
@@ -73,10 +70,7 @@ class MeetingManager: ObservableObject {
             }
             
             let duration = Date().timeIntervalSince(recording.startTime)
-            
-            // Stop screen share detection
-            ScreenShareDetector.shared.stopMonitoring()
-            
+
             AppState.shared.isRecording = false
             AppState.shared.stopRecordingTimer()
             AppState.shared.currentMeeting = nil

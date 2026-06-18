@@ -45,6 +45,7 @@ struct MeetingHistoryView: View {
             }
         }
         .frame(minWidth: 800, minHeight: 500)
+        .hiddenFromScreenCapture()
         .onAppear {
             appState.loadRecordedMeetings()
             if selectedMeeting == nil {

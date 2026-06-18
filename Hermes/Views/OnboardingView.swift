@@ -26,6 +26,7 @@ struct OnboardingView: View {
             footer
         }
         .frame(width: 560)
+        .hiddenFromScreenCapture()
         .onAppear {
             if !anthropicService.hasAPIKey {
                 _ = anthropicService.importLocalCredentials()

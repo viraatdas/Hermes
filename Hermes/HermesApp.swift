@@ -4,13 +4,24 @@ import UserNotifications
 @main
 struct HermesApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+    @ObservedObject private var appState = AppState.shared
+    @AppStorage("hideWhenScreenSharing") private var hideWhenScreenSharing = true
+
+    /// The status item is removed from the menu bar while you're screen sharing,
+    /// so Hermes leaves no trace in a full-screen capture.
+    private var iconInserted: Binding<Bool> {
+        Binding(
+            get: { !(hideWhenScreenSharing && appState.isScreenSharing) },
+            set: { _ in }
+        )
+    }
+
     var body: some Scene {
         Settings {
             SettingsView()
         }
-        
-        MenuBarExtra {
+
+        MenuBarExtra(isInserted: iconInserted) {
             MenuBarView()
         } label: {
             MenuBarIcon()
@@ -118,6 +129,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         }
 
         GlobalHotkeyService.shared.register()
+
+        // Watch for screen sharing so the menu bar icon can hide itself.
+        ScreenShareDetector.shared.startMonitoring()
     }
 
     func applicationWillTerminate(_ notification: Notification) {

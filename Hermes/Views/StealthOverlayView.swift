@@ -185,3 +185,26 @@ struct StealthOverlayView: View {
     StealthOverlayView()
         .frame(width: 360, height: 440)
 }
+
+// MARK: - Hide any Hermes window from screen capture
+
+/// Marks the hosting window as excluded from screen sharing / recording
+/// (`NSWindow.sharingType = .none`). The window's pixels are never handed to
+/// ScreenCaptureKit, Zoom, Meet, Teams, QuickTime, or screenshots.
+extension View {
+    func hiddenFromScreenCapture() -> some View {
+        background(WindowCaptureHider())
+    }
+}
+
+private struct WindowCaptureHider: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView { CaptureHidingView() }
+    func updateNSView(_ nsView: NSView, context: Context) {}
+}
+
+private final class CaptureHidingView: NSView {
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        window?.sharingType = .none
+    }
+}

@@ -46,6 +46,7 @@ struct CalendarView: View {
             }
         }
         .frame(minWidth: 560, minHeight: 480)
+        .hiddenFromScreenCapture()
     }
 
     // MARK: - Header

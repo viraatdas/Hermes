@@ -248,10 +248,11 @@ export default function Home() {
               </h2>
               <p className={styles.spotlightDesc}>
                 Press <kbd className={styles.kbd}>⌃⌥⌘Space</kbd> and a copilot
-                panel floats over your call. macOS excludes it from screen
-                capture, so it never appears in a Zoom, Meet, or Teams share.
-                Jot a &ldquo;follow up with&hellip;&rdquo; or ask the live
-                transcript a question — privately, mid-meeting.
+                panel floats over your call. Every Hermes window is excluded
+                from screen capture, and the menu bar icon hides itself while
+                you present — so nothing appears in a Zoom, Meet, or Teams
+                share. Jot a &ldquo;follow up with&hellip;&rdquo; or ask the
+                live transcript a question, privately, mid-meeting.
               </p>
             </div>
 
@@ -336,11 +337,12 @@ export default function Home() {
               <div className={styles.featureIcon}>
                 <EyeOffIcon />
               </div>
-              <h3 className={styles.featureTitle}>Invisible Overlay</h3>
+              <h3 className={styles.featureTitle}>Invisible to Capture</h3>
               <p className={styles.featureDesc}>
-                A floating copilot hidden from screen sharing. Capture
-                follow-ups and ask the transcript privately mid-call — no one
-                else sees it. Toggle with ⌃⌥⌘Space.
+                Every window is excluded from screen recording, and the menu
+                bar icon hides while you present. The copilot overlay
+                (⌃⌥⌘Space) lets you take notes and ask the transcript with no
+                trace in the share.
               </p>
             </div>
 

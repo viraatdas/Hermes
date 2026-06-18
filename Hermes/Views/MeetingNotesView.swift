@@ -24,6 +24,7 @@ struct MeetingNotesView: View {
             }
         }
         .frame(minWidth: 780, minHeight: 560)
+        .hiddenFromScreenCapture()
     }
 
     private var header: some View {

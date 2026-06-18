@@ -9,30 +9,18 @@ class ScreenShareDetector: ObservableObject {
     @Published var isScreenSharing = false
     
     private var timer: Timer?
-    
-    // Common screen sharing app bundle identifiers
-    private let screenSharingApps = [
-        "us.zoom.xos",
-        "com.microsoft.teams",
-        "com.google.Chrome",  // Google Meet runs in Chrome
-        "com.brave.Browser",
-        "org.mozilla.firefox",
-        "com.apple.Safari",
-        "com.cisco.webexmeetingsapp",
-        "com.webex.meetingmanager",
-        "com.slack.Slack",
-        "com.discord.Discord"
-    ]
-    
+
     private init() {}
     
     func startMonitoring() {
+        guard timer == nil else { return }   // idempotent: safe to call from launch + recording
         // Check every 2 seconds
         timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
             Task {
                 await self?.checkScreenSharing()
             }
         }
+        Task { await checkScreenSharing() }
     }
     
     func stopMonitoring() {
@@ -40,69 +28,36 @@ class ScreenShareDetector: ObservableObject {
         timer = nil
     }
     
+    // Window titles the major meeting apps give their "you are sharing" controls.
+    private let sharingKeywords = [
+        "you are screen sharing", "you're screen sharing", "you are sharing your screen",
+        "stop share", "stop sharing", "sharing your screen", "screen sharing",
+        "you are presenting", "you're presenting", "presenting to everyone",
+        "share toolbar", "sharing toolbar", "zsharetoolbar", "as_toolbar",
+        "screen broadcast", "is sharing your screen"
+    ]
+
     private func checkScreenSharing() async {
         do {
-            let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: false)
-            
-            // Check if any screen sharing window is active
-            // This is a heuristic - we look for windows from known screen sharing apps
-            // that have "sharing" indicators or specific window titles
-            
-            let sharingIndicators = content.windows.contains { window in
-                let title = window.title?.lowercased() ?? ""
-                let appName = window.owningApplication?.applicationName.lowercased() ?? ""
-                
-                // Check for common screen sharing indicators
-                let sharingKeywords = ["screen share", "sharing screen", "share screen", 
-                                      "you are sharing", "presenting", "screen sharing"]
-                
-                for keyword in sharingKeywords {
-                    if title.contains(keyword) || appName.contains(keyword) {
-                        return true
-                    }
-                }
-                
-                return false
+            let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+
+            let sharing = content.windows.contains { window in
+                guard window.isOnScreen else { return false }
+                let title = (window.title ?? "").lowercased()
+                guard !title.isEmpty else { return false }
+                return sharingKeywords.contains { title.contains($0) }
             }
-            
-            // Also check for the macOS screen recording indicator
-            let hasScreenRecordingIndicator = checkMacOSScreenRecordingIndicator()
-            
-            await MainActor.run {
-                // We consider screen sharing active if we detect indicators
-                // but we're NOT the one doing the recording
-                let wasSharing = self.isScreenSharing
-                self.isScreenSharing = sharingIndicators || hasScreenRecordingIndicator
-                
-                if self.isScreenSharing != wasSharing {
-                    self.notifyScreenShareChange()
-                }
+
+            let wasSharing = isScreenSharing
+            isScreenSharing = sharing
+            AppState.shared.isScreenSharing = sharing
+
+            if sharing != wasSharing {
+                notifyScreenShareChange()
             }
         } catch {
-            print("Failed to check screen sharing: \(error)")
+            // Missing Screen Recording permission or transient failure — leave state unchanged.
         }
-    }
-    
-    private func checkMacOSScreenRecordingIndicator() -> Bool {
-        // Check if the screen recording menu bar icon is visible
-        // This is tricky to detect directly, so we use an approximation
-        
-        // Check running processes for screen sharing tools
-        let runningApps = NSWorkspace.shared.runningApplications
-        
-        for app in runningApps {
-            guard let bundleId = app.bundleIdentifier else { continue }
-            
-            // Check if it's a known screen sharing app and is active
-            if screenSharingApps.contains(bundleId) && app.isActive {
-                // The app is in the foreground - user might be in a meeting
-                // We can't definitively know if they're sharing their screen
-                // but we can be cautious
-                return false // Don't hide just because a meeting app is active
-            }
-        }
-        
-        return false
     }
     
     private func notifyScreenShareChange() {

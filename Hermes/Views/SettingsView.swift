@@ -49,6 +49,7 @@ struct SettingsView: View {
                 }
         }
         .frame(width: 470, height: 380)
+        .hiddenFromScreenCapture()
         .onAppear {
             launchAtLogin = LaunchAtLoginService.shared.isEnabled
         }
@@ -64,7 +65,7 @@ struct SettingsView: View {
                         LaunchAtLoginService.shared.isEnabled = newValue
                     }
                 
-                Toggle("Hide when screen sharing", isOn: $hideWhenScreenSharing)
+                Toggle("Hide menu bar icon while screen sharing", isOn: $hideWhenScreenSharing)
                 
                 Picker("Notification before meeting", selection: $notificationMinutesBefore) {
                     Text("1 minute").tag(1)
