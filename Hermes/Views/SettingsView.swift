@@ -208,11 +208,7 @@ struct SettingsView: View {
     private var aiTab: some View {
         Form {
             Section {
-                Picker("Provider", selection: $anthropicService.activeProvider) {
-                    ForEach(AIProvider.allCases) { provider in
-                        Text(provider.displayName).tag(provider)
-                    }
-                }
+                ProviderPicker()
 
                 HStack {
                     Image(systemName: anthropicService.hasAPIKey ? "checkmark.circle.fill" : "xmark.circle.fill")
@@ -222,6 +218,10 @@ struct SettingsView: View {
                          : "No credential for \(anthropicService.activeProvider.displayName)")
                     Spacer()
                 }
+
+                Text(anthropicService.activeProvider.fieldPrompt)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
 
                 SecureField(anthropicService.activeProvider.placeholder, text: $credentialInput)
                     .textFieldStyle(.roundedBorder)
@@ -344,6 +344,69 @@ struct SettingsView: View {
                 .foregroundColor(.secondary)
         }
         .padding(40)
+    }
+}
+
+/// A styled dropdown for choosing the AI credential, showing whether each
+/// option is an OAuth token or an API key.
+struct ProviderPicker: View {
+    @ObservedObject private var service = AnthropicService.shared
+    private let gold = Color(hex: "D4AF37")
+
+    var body: some View {
+        Menu {
+            ForEach(AIProvider.allCases) { provider in
+                Button {
+                    service.activeProvider = provider
+                } label: {
+                    Label("\(provider.displayName) · \(provider.kind.label)", systemImage: provider.symbol)
+                }
+            }
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: service.activeProvider.symbol)
+                    .font(.system(size: 14))
+                    .foregroundColor(gold)
+                    .frame(width: 20)
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(service.activeProvider.displayName)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.primary)
+                    Text("Authenticate with \(service.activeProvider.kind.label.lowercased())")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                kindBadge
+
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(RoundedRectangle(cornerRadius: 9).fill(Color.primary.opacity(0.05)))
+            .overlay(RoundedRectangle(cornerRadius: 9).strokeBorder(Color.primary.opacity(0.1), lineWidth: 1))
+            .contentShape(Rectangle())
+        }
+        .menuStyle(.button)
+        .buttonStyle(.plain)
+        .menuIndicator(.hidden)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var isOAuth: Bool { service.activeProvider.kind == .oauthToken }
+
+    private var kindBadge: some View {
+        Text(isOAuth ? "OAuth" : "API key")
+            .font(.system(size: 9, weight: .bold))
+            .foregroundColor(isOAuth ? .blue : gold)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 3)
+            .background(Capsule().fill((isOAuth ? Color.blue : gold).opacity(0.15)))
     }
 }
 

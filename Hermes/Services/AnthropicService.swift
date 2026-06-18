@@ -2,6 +2,19 @@ import Foundation
 import Security
 import AppKit
 
+/// Whether a credential is a long-lived API key or an OAuth access token.
+enum CredentialKind {
+    case apiKey
+    case oauthToken
+
+    var label: String {
+        switch self {
+        case .apiKey: return "API key"
+        case .oauthToken: return "OAuth token"
+        }
+    }
+}
+
 /// The AI provider a credential targets.
 enum AIProvider: String, CaseIterable, Identifiable {
     case anthropic        // Anthropic API key (sk-ant-api...)
@@ -10,11 +23,27 @@ enum AIProvider: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    /// Short name for the provider (kind is shown separately as a badge).
     var displayName: String {
         switch self {
-        case .anthropic: return "Anthropic API Key"
-        case .claudeCode: return "Claude Code (OAuth)"
-        case .openai: return "Codex / OpenAI"
+        case .anthropic: return "Anthropic"
+        case .claudeCode: return "Claude Code"
+        case .openai: return "OpenAI / Codex"
+        }
+    }
+
+    var kind: CredentialKind {
+        switch self {
+        case .anthropic, .openai: return .apiKey
+        case .claudeCode: return .oauthToken
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .anthropic: return "key.fill"
+        case .claudeCode: return "lock.shield.fill"
+        case .openai: return "cpu"
         }
     }
 
@@ -24,6 +53,10 @@ enum AIProvider: String, CaseIterable, Identifiable {
         case .claudeCode: return "sk-ant-oat01-..."
         case .openai: return "sk-..."
         }
+    }
+
+    var fieldPrompt: String {
+        "Paste your \(displayName) \(kind.label.lowercased())"
     }
 
     /// Keychain account key used to store this provider's secret.

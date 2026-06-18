@@ -65,12 +65,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
     
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
-            if url.scheme == "hermes" {
-                if url.host == "calendar" {
-                    Task { @MainActor in
-                        AppWindowPresenter.openCalendar()
-                    }
-                }
+            guard url.scheme == "hermes" else { continue }
+            switch url.host {
+            case "calendar":
+                Task { @MainActor in AppWindowPresenter.openCalendar() }
+            case "setup":
+                Task { @MainActor in OnboardingWindowPresenter.open() }
+            case "notes":
+                Task { @MainActor in MeetingNotesWindowPresenter.open() }
+            case "overlay":
+                Task { @MainActor in StealthOverlayController.shared.toggle() }
+            default:
+                break
             }
         }
     }
