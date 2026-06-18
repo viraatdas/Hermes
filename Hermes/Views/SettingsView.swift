@@ -296,7 +296,7 @@ struct SettingsView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            Text("Version 0.2.8")
+            Text("Version 0.2.9")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
